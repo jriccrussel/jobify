@@ -346,3 +346,205 @@ return (
   </Wrapper>
 );
 ```
+#### Global Context
+
+- in src create <b>context</b> directory
+- actions.js
+- reducer.js
+- appContext.js
+
+```js
+import React, { useState, useReducer, useContext } from 'react';
+
+export const initialState = {
+  isLoading: false,
+  showAlert: false,
+  alertText: '',
+  alertType: '',
+};
+const AppContext = React.createContext();
+const AppProvider = ({ children }) => {
+  const [state, setState] = useState(initialState);
+
+  return (
+    <AppContext.Provider
+      value={{
+        ...state,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+// make sure use
+export const useAppContext = () => {
+  return useContext(AppContext);
+};
+567
+export { AppProvider };
+```
+
+- index.js
+
+```js
+import { AppProvider } from './context/appContext';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <AppProvider>
+      <App />
+    </AppProvider>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
+
+- Register.js
+
+```js
+import { useAppContext } from '../context/appContext';
+
+const { isLoading, showAlert } = useAppContext();
+```
+
+- switch to global showAlert
+
+#### useReducer
+
+- [React Tutorial](https://youtu.be/iZhV0bILFb0)
+- useReducer vs Redux
+- multiple reducers vs one
+
+#### Wire Up Reducer
+
+```js
+reducer.js;
+
+const reducer = (state, action) => {
+  throw new Error(`no such action :${action.type}`);
+};
+export default reducer;
+```
+
+```js
+appContext.js;
+
+import reducer from './reducer';
+
+const [state, dispatch] = useReducer(reducer, initialState);
+```
+
+#### Display Alert
+
+```js
+actions.js;
+
+export const DISPLAY_ALERT = 'SHOW_ALERT';
+```
+
+- setup imports (reducer and appContext)
+
+```js
+appContext.js
+
+const displayAlert() =>{
+  dispatch({type:DISPLAY_ALERT})
+}
+
+```
+
+```js
+reducer.js;
+
+if (action.type === DISPLAY_ALERT) {
+  return {
+    ...state,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: 'Please provide all values!',
+  };
+}
+```
+
+```js
+Alert.js in Components;
+
+import { useAppContext } from '../context/appContext';
+
+const Alert = () => {
+  const { alertType, alertText } = useAppContext();
+  return <div className={`alert alert-${alertType}`}>{alertText}</div>;
+};
+```
+
+#### Display Alert
+
+- [JS Nuggets - Dynamic Object Keys](https://youtu.be/_qxCYtWm0tw)
+
+```js
+appContext.js;
+
+const handleChange = (e) => {
+  setValues({ ...values, [e.target.name]: e.target.value });
+};
+```
+
+- get displayAlert function
+
+```js
+appContext.js;
+
+const onSubmit = (e) => {
+  e.preventDefault();
+  const { name, email, password, isMember } = values;
+  if (!email || !password || (!isMember && !name)) {
+    displayAlert();
+    return;
+  }
+  console.log(values);
+};
+```
+
+#### Clear Alert
+
+- technically optional
+
+```js
+actions.js;
+
+export const CLEAR_ALERT = 'CLEAR_ALERT';
+```
+
+- setup imports (reducer and appContext)
+
+```js
+reducer.js;
+
+if (action.type === CLEAR_ALERT) {
+  return {
+    ...state,
+    showAlert: false,
+    alertType: '',
+    alertText: '',
+  };
+}
+```
+
+```js
+appContext.js;
+
+const displayAlert = () => {
+  dispatch({
+    type: DISPLAY_ALERT,
+  });
+  clearAlert();
+};
+
+const clearAlert = () => {
+  setTimeout(() => {
+    dispatch({
+      type: CLEAR_ALERT,
+    });
+  }, 3000);
+};
+```

@@ -1,28 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import { Logo, FormRow, Alert } from '../components'
 import Wrapper from '../assets/wrappers/RegisterPage'
+import { useAppContext } from '../context/appContext'
 
 const initialState = {
   name: '',
   email: '',
   password: '',
   isMember: true,
-  showAlert: true,
 }
 
 const Register = () => {
   
   const [values, setValues] = useState(initialState)
 
+  const { isLoading, showAlert, displayAlert } = useAppContext()
+
   // global context & useNavigate later
 
   const handleChange = (e) => {
-    console.log(e.target)
+    setValues({...values, [e.target.name]: e.target.value})
   }
 
   const onSubmit = (e) => {
     e.preventDefault()
-    console.log(e.target)
+    const {
+      name,
+      email,
+      password,
+      isMember
+    } = values
+
+    if(!email || !password || (!isMember && !name)){
+      displayAlert()
+      return
+    }
+
+    console.log(values)
   }
 
   const toggleMember = () => {
@@ -34,7 +48,7 @@ const Register = () => {
       <form className='form' onSubmit={onSubmit}>
         <Logo />
         <h3>{values.isMember ? 'Login' : 'Register'}</h3>
-        {/* {values.showAlert && <Alert />} */}
+        {showAlert && <Alert />}
         {/* name input */}
         {!values.isMember && (
            <FormRow 
