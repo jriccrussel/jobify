@@ -1,12 +1,12 @@
 import React from 'react'
-import { Logo } from '../components/Logo'
+// import { Logo } from '../components/Logo'
 import Error from './Error'
 
 const Dashboard = () => {
   return (
     <div>
       <Error/>
-      <Logo/>
+      {/* <Logo/> */}
       Dashboard
     </div>
   )

@@ -1,22 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import logo from '../assets/images/logo.svg'
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/Testing'
-import { Logo } from '../components/Logo'
+import { Logo } from '../components'
 // import styled from 'styled-components'
 
 const Landing = () => {
   return (
     <Wrapper>
         <nav>
-            <Logo />
+          <Logo />
         </nav>
         <div className="container page">
             <div className="info">
                 <h1>Job <span>Tracking</span> App</h1>
                 <p>
-                I'm baby williamsburg taxidermy put a bird on it neutral milk hotel, meggings adaptogen sriracha everyday carry thundercats celiac kogi. Art party JOMO fingerstache air plant aesthetic gatekeep ethical cred gluten-free, tousled man braid same readymade mixtape. 
+                  I'm baby williamsburg taxidermy put a bird on it neutral milk hotel, meggings adaptogen sriracha everyday carry thundercats celiac kogi. Art party JOMO fingerstache air plant aesthetic gatekeep ethical cred gluten-free, tousled man braid same readymade mixtape. 
                 </p>
                 <Link to='/register' className="btn btn-hero">Login/Register</Link>
             </div>
