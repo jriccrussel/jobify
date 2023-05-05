@@ -753,3 +753,21 @@ app.use('/api/v1/jobs', jobsRouter);
 - setup schema
 - name, email, password, lastName, location
 - all {type:String}
+
+#### Validate Email
+
+```js
+validate:{
+  validator:(field)=> {return 2 > 1},
+  message:'Please provide valid email'
+  }
+```
+
+- [Validator Package](https://www.npmjs.com/package/validator)
+
+```sh
+npm install validator
+```
+
+- import in User.js
+- validator.isEmail
