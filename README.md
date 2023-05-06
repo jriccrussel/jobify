@@ -818,3 +818,12 @@ npm install http-status-codes
 - setup defaultError
 
 #### Custom Errors
+
+#### Refactor Errors
+
+- create errors folder
+- create custom-api, bad-request, not-found, index.js files
+- add proper imports
+- setup index.js just like in the front-end
+- import {BadRequestError} in authController
+- gotcha "errors/index.js"
