@@ -30,10 +30,16 @@ const errorHandlerMiddleware = (err, req, res, next) => {
         console.log("%c Line:24 🍌 defaultError.msg", "color:#6ec1c2", defaultError.msg);
     }
 
+    // if ang email(depends sa schema) kulang '@' or '@gmail.com'(email has to be unique) then show error message
+    if(err.code && err.code === 11000){
+        defaultError.statusCode = StatusCodes.BAD_REQUEST
+        defaultError.msg = `${Object.keys(err.keyValue)} field has to be unique`
+    }
+
     // show only ang error message
-    // res.status(defaultError.statusCode).json({ msg: defaultError.msg })
+    res.status(defaultError.statusCode).json({ msg: defaultError.msg })
     // show error message object
-    res.status(defaultError.statusCode).json({ msg: err })
+    // res.status(defaultError.statusCode).json({ msg: err })
 }
 
 export default errorHandlerMiddleware
