@@ -780,3 +780,7 @@ npm install validator
 - await User.create(req.body)
 - if success 201 with json({user}) (temp)
 - if error 500 with json({msg:'there was an error'})
+
+#### Pass Error to Error Handler
+
+- next(error)
