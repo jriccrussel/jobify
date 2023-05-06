@@ -1,6 +1,31 @@
 import User from '../models/User.js';
 import { StatusCodes } from 'http-status-codes'
 
+class CustomAPIError extends Error {
+    constructor(message){
+        super(message)
+        // this.statusCode is based on the key of status code from error-handler
+        // const defaultError = {
+        //     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        // }
+        this.statusCode = StatusCodes.BAD_REQUEST
+    }
+}
+
+class BadRequestError extends CustomAPIError {
+    constructor(message){
+        super(message)
+        this.statusCode = StatusCodes.BAD_REQUEST
+    }
+}
+
+class NotFoundError extends CustomAPIError {
+    constructor(message){
+        super(message)
+        this.statusCode = StatusCodes.NOT_FOUND
+    }
+}
+
 // const register = async (req, res, next) => {
 //     try {
 //         const user = await User.create(req.body);
@@ -14,6 +39,14 @@ import { StatusCodes } from 'http-status-codes'
 // }
 
 const register = async (req, res) => {
+
+    const { name, email, password } = req.body
+
+    if(!email || !password || !name) {
+        // throw new CustomAPIError('Please provide all values')
+        throw new BadRequestError('Please provide all values')
+    }
+
     const user = await User.create(req.body);
     res.status(StatusCodes.OK).json({ user });
 }

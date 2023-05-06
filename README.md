@@ -816,3 +816,5 @@ npm install http-status-codes
 
 - import/setup in authController and error-handler
 - setup defaultError
+
+#### Custom Errors
