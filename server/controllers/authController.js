@@ -15,7 +15,6 @@ import { StatusCodes } from 'http-status-codes'
 
 const register = async (req, res) => {
     const user = await User.create(req.body);
-    console.log("%c Line:6 🥖 user", "color:#b03734", user);
     res.status(StatusCodes.OK).json({ user });
 }
 
