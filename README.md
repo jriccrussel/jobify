@@ -846,3 +846,12 @@ npm install bcryptjs
 - UserSchema.pre('save',async function(){
   "this" points to instance created by UserSchema
   })
+
+#### Mongoose - Custom Instance Methods
+
+[Custom Instance Methods](https://mongoosejs.com/docs/guide.html#methods)
+
+- UserSchema.methods.createJWT = function(){console.log(this)}
+- register controller
+- right after User.create()
+- invoke user.createJWT()
