@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from 'validator';
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -35,6 +36,13 @@ const UserSchema = new mongoose.Schema({
         maxlength: 20,
         default: 'my city',
     },
+})
+
+// mongoose middleware - a way for us to do something before and after we save or do functionalities(like to hash a password)
+UserSchema.pre('save', async function(){
+    // console.log(this.password)
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
 })
 
 export default mongoose.model('User', UserSchema)
