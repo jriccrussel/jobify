@@ -889,3 +889,29 @@ return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
 
 - password : {select:false}
 - complete response
+
+#### Concurrently
+
+- front-end and backend (server)
+- run separate terminals
+- [concurrently](https://www.npmjs.com/package/concurrently)
+
+```sh
+npm install concurrently --save-dev
+
+```
+
+- package.json
+
+```js
+// --kill-others switch, all commands are killed if one dies
+// --prefix client - folder
+// cd client && npm start
+// escape quotes
+
+"scripts": {
+    "server": "nodemon server --ignore client",
+    "client": "npm start --prefix client",
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\""
+  },
+```

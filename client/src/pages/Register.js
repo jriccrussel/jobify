@@ -70,7 +70,7 @@ const Register = () => {
         {/* password input */}
         <FormRow 
           type={'password'}
-          name={'passowrd'}
+          name={'password'}
           value={values.password}
           handleChange={handleChange}
         />
