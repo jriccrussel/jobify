@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 const app = express();
 
@@ -19,11 +20,17 @@ import jobsRouter from './routes/jobsRoutes.js';
 import notFoundMiddleware from './middleware/not-found.js';
 import errorHandlerMiddleware from './middleware/error-handler.js';
 
+app.use(cors())
 app.use(express.json())
 
 app.get('/', (req, res) => {
     // throw new Error('Error!!!')
-    res.send('Welcome!')
+    // res.send('Welcome!')
+    res.json({ msg: 'Welcome!' })
+})
+
+app.get('/api/v1', (req, res) => {
+    res.json({ msg: 'API' })
 })
 
 app.use('/api/v1/auth', authRouter)
@@ -32,7 +39,7 @@ app.use('/api/v1/jobs', jobsRouter)
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
 
-const port = process.env.PORT
+const port = process.env.PORT || 5000
 
 // app.listen(port, () => console.log(`Server listening on ${port}...`))
 

@@ -915,3 +915,37 @@ npm install concurrently --save-dev
     "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\""
   },
 ```
+
+#### Cors Error
+
+[Cors Error](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+
+- two fixes (cors package and proxy)
+
+#### Cors Package
+
+[cors package](https://www.npmjs.com/package/cors)
+
+```sh
+npm install cors
+```
+
+```js
+import cors from 'cors';
+
+app.use(cors());
+```
+
+#### Proxy
+
+- access from anywhere
+- don't want to use full url
+
+[cra proxy](https://create-react-app.dev/docs/proxying-api-requests-in-development/)
+
+```js
+"proxy":"http://localhost:5000"
+```
+
+- my preference to remove trailing slash /
+- restart app
