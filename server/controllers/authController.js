@@ -59,6 +59,7 @@ const register = async (req, res) => {
 
     // add token
     const token = user.createJWT()
+    
     res.status(StatusCodes.OK).json({ 
         user: {
             email: user.email,
