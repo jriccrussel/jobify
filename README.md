@@ -855,3 +855,37 @@ npm install bcryptjs
 - register controller
 - right after User.create()
 - invoke user.createJWT()
+
+#### JWT
+
+- token
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+
+```sh
+npm install jsonwebtoken
+```
+
+- User Model
+- import jwt from 'jsonwebtoken'
+- jwt.sign(payload,secret,options)
+- createJWT
+
+```js
+return jwt.sign({ userId: this._id }, 'jwtSecret', { expiresIn: '1d' });
+```
+
+```js
+return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+  expiresIn: process.env.JWT_LIFETIME,
+});
+```
+
+#### JWT_SECRET and JWT_LIFETIME
+
+- [Keys Generator](https://www.allkeysgenerator.com/)
+- RESTART SERVER
+
+#### Complete Register
+
+- password : {select:false}
+- complete response
