@@ -15,7 +15,8 @@ const Register = () => {
   
   const [values, setValues] = useState(initialState)
   const navigate = useNavigate()
-  const { user, isLoading, showAlert, displayAlert, registerUser } = useAppContext()
+  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } = useAppContext()
+  console.log("%c Line:19 🥛 user", "color:#7f2b82", user);
 
   // global context & useNavigate later
 
@@ -40,7 +41,8 @@ const Register = () => {
     const currentUser = { name, email, password, }
 
     if(isMember){
-      console.log("%c Line:46 🥕", "color:#ea7e5c", 'already a member');
+      // console.log("%c Line:46 🥕", "color:#ea7e5c", 'already a member');
+      loginUser(currentUser)
     } else {
       registerUser(currentUser)
     }

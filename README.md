@@ -1198,3 +1198,86 @@ const login = async (req, res) => {
 ```
 
 - test in Postman
+
+#### Login User - Setup
+
+- actions.js LOGIN_USER_BEGIN,SUCCESS,ERROR
+- import reducer,appContext
+
+```js
+appContext.js;
+const loginUser = async (currentUser) => {
+  console.log(currentUser);
+};
+```
+
+- import in Register.js
+
+```js
+Register.js;
+
+if (isMember) {
+  loginUser(currentUser);
+} else {
+  registerUser(currentUser);
+}
+```
+
+#### Login User - Complete
+
+```js
+appContext.js;
+const loginUser = async (currentUser) => {
+  dispatch({ type: LOGIN_USER_BEGIN });
+  try {
+    const { data } = await axios.post('/api/v1/auth/login', currentUser);
+    const { user, token, location } = data;
+
+    dispatch({
+      type: LOGIN_USER_SUCCESS,
+      payload: { user, token, location },
+    });
+
+    addUserToLocalStorage({ user, token, location });
+  } catch (error) {
+    dispatch({
+      type: LOGIN_USER_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === LOGIN_USER_BEGIN) {
+  return {
+    ...state,
+    isLoading: true,
+  };
+}
+if (action.type === LOGIN_USER_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    user: action.payload.user,
+    token: action.payload.token,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+    showAlert: true,
+    alertType: 'success',
+    alertText: 'Login Successful! Redirecting...',
+  };
+}
+if (action.type === LOGIN_USER_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: action.payload.msg,
+  };
+}
+```
