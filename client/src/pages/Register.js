@@ -11,11 +11,10 @@ const initialState = {
   isMember: true,
 }
 
-const Register = () => {
-  
+const Register = () => {  
   const [values, setValues] = useState(initialState)
   const navigate = useNavigate()
-  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser } = useAppContext()
+  const { user, isLoading, showAlert, displayAlert, registerUser, loginUser, setupUser } = useAppContext()
   console.log("%c Line:19 🥛 user", "color:#7f2b82", user);
 
   // global context & useNavigate later
@@ -42,9 +41,19 @@ const Register = () => {
 
     if(isMember){
       // console.log("%c Line:46 🥕", "color:#ea7e5c", 'already a member');
-      loginUser(currentUser)
+      // loginUser(currentUser)
+      setupUser({
+        currentUser,
+        endPoint: 'login',
+        alertText: 'Login Successful! Redirecting...'
+      })
     } else {
-      registerUser(currentUser)
+      // registerUser(currentUser)
+      setupUser({
+        currentUser,
+        endPoint: 'register',
+        alertText: 'User Created! Redirecting...'
+      })
     }
 
     console.log(values)
@@ -61,7 +70,6 @@ const Register = () => {
       }, 3000)
     }
   }, [user, navigate])
-  
   
   return (
     <Wrapper>
