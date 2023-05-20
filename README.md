@@ -1129,4 +1129,38 @@ const initialState = {
   userLocation: userLocation || '',
   jobLocation: userLocation || '',
 };
+
+```
+#### Morgan Package
+
+- http logger middleware for node.js
+- [morgan docs](https://www.npmjs.com/package/morgan)
+
+```sh
+npm install morgan
+```
+
+```js
+import morgan from 'morgan';
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
+```
+
+#### UnauthenticatedError
+
+- unauthenticated.js in errors
+- import/export
+
+```js
+import { StatusCodes } from 'http-status-codes';
+import CustomAPIError from './custom-api.js';
+
+class UnauthenticatedError extends CustomAPIError {
+  constructor(message) {
+    super(message);
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+  }
+}
 ```
