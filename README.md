@@ -1164,3 +1164,37 @@ class UnauthenticatedError extends CustomAPIError {
   }
 }
 ```
+#### Compare Password
+
+```js
+User.js in models;
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+```
+
+```js
+authController.js;
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new BadRequestError('Please provide all values');
+  }
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user) {
+    throw new UnauthenticatedError('Invalid Credentials');
+  }
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError('Invalid Credentials');
+  }
+  const token = user.createJWT();
+  user.password = undefined;
+  res.status(StatusCodes.OK).json({ user, token, location: user.location });
+};
+```
+
+- test in Postman

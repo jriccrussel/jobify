@@ -54,4 +54,12 @@ UserSchema.methods.createJWT = function(){
     return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME });
 }
 
+UserSchema.methods.comparePassword = async function(candidatePassword){
+    
+    // hashing(using bycipt pag hash sa password) is one time only method
+    // candidatePassword ato e provide from the request and compare ang this.password from our database
+    const isMatch = await bcrypt.compare(candidatePassword, this.password)
+    return isMatch 
+}
+
 export default mongoose.model('User', UserSchema)
