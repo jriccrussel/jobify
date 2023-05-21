@@ -1475,3 +1475,66 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 ```
+
+#### Navbar, SmallSidebar, BigSidebar
+
+- create Navbar, SmallSidebar, BigSidebar in components
+- import Wrappers from assets/wrappers
+- simple return
+- import/export
+
+```js
+SharedLayout.js;
+
+import { Outlet } from 'react-router-dom';
+import { Navbar, SmallSidebar, BigSidebar } from '../../components';
+import Wrapper from '../../assets/wrappers/SharedLayout';
+
+const SharedLayout = () => {
+  const { user } = useAppContext();
+  return (
+    <>
+      <Wrapper>
+        <main className='dashboard'>
+          <SmallSidebar />
+          <BigSidebar />
+          <div>
+            <Navbar />
+            <div className='dashboard-page'>
+              <Outlet />
+            </div>
+          </div>
+        </main>
+      </Wrapper>
+    </>
+  );
+};
+
+export default SharedLayout;
+```
+
+#### React Icons
+
+[React Icons](https://react-icons.github.io/react-icons/)
+
+```sh
+npm install react-icons
+```
+
+```js
+Navbar.js
+
+import Wrapper from '../assets/wrappers/Navbar'
+import {FaHome} from 'react-icons/fa'
+const Navbar = () => {
+  return (
+    <Wrapper>
+      <h4>navbar</h4>
+      <FaHome>
+    </Wrapper>
+  )
+}
+
+export default Navbar
+
+```
