@@ -1538,3 +1538,175 @@ const Navbar = () => {
 export default Navbar
 
 ```
+
+#### Navbar Setup
+
+```js
+Navbar.js;
+
+import { useState } from 'react';
+import { FaAlignLeft, FaUserCircle, FaCaretDown } from 'react-icons/fa';
+import { useAppContext } from '../context/appContext';
+import Logo from './Logo';
+import Wrapper from '../assets/wrappers/Navbar';
+const Navbar = () => {
+  return (
+    <Wrapper>
+      <div className='nav-center'>
+        <button
+          className='toggle-btn'
+          onClick={() => console.log('toggle sidebar')}
+        >
+          <FaAlignLeft />
+        </button>
+
+        <div>
+          <Logo />
+          <h3 className='logo-text'>dashboard</h3>
+        </div>
+
+        <div className='btn-container'>
+          <button className='btn' onClick={() => console.log('show logout')}>
+            <FaUserCircle />
+            john
+            <FaCaretDown />
+          </button>
+          <div className='dropdown show-dropdown'>
+            <button
+              onClick={() => console.log('logout user')}
+              className='dropdown-btn'
+            >
+              logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
+
+export default Navbar;
+```
+
+#### Toggle Sidebar
+
+```js
+actions.js;
+
+export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
+```
+
+- import/export
+
+```js
+appContext.js;
+
+const initialState = {
+  showSidebar: false,
+};
+
+const toggleSidebar = () => {
+  dispatch({ type: TOGGLE_SIDEBAR });
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === TOGGLE_SIDEBAR) {
+  return { ...state, showSidebar: !state.showSidebar };
+}
+```
+
+```js
+Navbar.js;
+
+const { toggleSidebar } = useAppContext();
+
+return (
+  <button className='toggle-btn' onClick={toggleSidebar}>
+    <FaAlignLeft />
+  </button>
+);
+```
+#### Toggle Dropdown
+
+```js
+Navbar.js
+
+const [showLogout, setShowLogout] = useState(false)
+
+<div className='btn-container'>
+  <button className='btn' onClick={() => setShowLogout(!showLogout)}>
+    <FaUserCircle />
+      {user.name}
+    <FaCaretDown />
+  </button>
+  <div className={showLogout ? 'dropdown show-dropdown' : 'dropdown'}>
+    <button onClick={() => logoutUser()} className='dropdown-btn'>
+      logout
+    </button>
+  </div>
+</div>
+
+```
+
+#### Logout User
+
+```js
+actions.js;
+
+export const LOGOUT_USER = 'LOGOUT_USER';
+```
+
+- import/export
+
+```js
+appContext.js
+
+const logoutUser = () => {
+  dispatch({ type: LOGOUT_USER })
+  removeUserFromLocalStorage()
+}
+
+value={{logoutUser}}
+```
+
+```js
+reducer.js;
+
+import { initialState } from './appContext';
+
+if (action.type === LOGOUT_USER) {
+  return {
+    ...initialState,
+    user: null,
+    token: null,
+    userLocation: '',
+    jobLocation: '',
+  };
+}
+```
+
+```js
+Navbar.js;
+
+const { user, logoutUser, toggleSidebar } = useAppContext();
+
+return (
+  <div className='btn-container'>
+    <button className='btn' onClick={() => setShowLogout(!showLogout)}>
+      <FaUserCircle />
+      {user.name}
+      {user && user.name}
+      {user?.name} // optional chaining
+      <FaCaretDown />
+    </button>
+    <div className={showLogout ? 'dropdown show-dropdown' : 'dropdown'}>
+      <button onClick={logoutUser} className='dropdown-btn'>
+        logout
+      </button>
+    </div>
+  </div>
+);
+```
