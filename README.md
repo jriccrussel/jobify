@@ -1281,3 +1281,197 @@ if (action.type === LOGIN_USER_ERROR) {
   };
 }
 ```
+
+#### Refactor
+
+```js
+actions.js;
+export const SETUP_USER_BEGIN = 'SETUP_USER_BEGIN';
+export const SETUP_USER_SUCCESS = 'SETUP_USER_SUCCESS';
+export const SETUP_USER_ERROR = 'SETUP_USER_ERROR';
+```
+
+```js
+appContext.js;
+
+const setupUser = async ({ currentUser, endPoint, alertText }) => {
+  dispatch({ type: SETUP_USER_BEGIN });
+  try {
+    const { data } = await axios.post(`/api/v1/auth/${endPoint}`, currentUser);
+
+    const { user, token, location } = data;
+    dispatch({
+      type: SETUP_USER_SUCCESS,
+      payload: { user, token, location, alertText },
+    });
+    addUserToLocalStorage({ user, token, location });
+  } catch (error) {
+    dispatch({
+      type: SETUP_USER_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js;
+if (action.type === SETUP_USER_BEGIN) {
+  return { ...state, isLoading: true };
+}
+if (action.type === SETUP_USER_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    token: action.payload.token,
+    user: action.payload.user,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+    showAlert: true,
+    alertType: 'success',
+    alertText: action.payload.alertText,
+  };
+}
+if (action.type === SETUP_USER_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: action.payload.msg,
+  };
+}
+```
+
+- import/export
+
+```js
+Register.js;
+
+const onSubmit = (e) => {
+  e.preventDefault();
+  const { name, email, password, isMember } = values;
+  if (!email || !password || (!isMember && !name)) {
+    displayAlert();
+    return;
+  }
+  const currentUser = { name, email, password };
+  if (isMember) {
+    setupUser({
+      currentUser,
+      endPoint: 'login',
+      alertText: 'Login Successful! Redirecting...',
+    });
+  } else {
+    setupUser({
+      currentUser,
+      endPoint: 'register',
+      alertText: 'User Created! Redirecting...',
+    });
+  }
+};
+```
+
+#### Nested Pages in React Router 6
+
+#### Dashboard pages
+
+- delete Dashboard.js
+- fix imports/exports
+- replace in home route
+
+```js
+<Route path='/' element={<div>dashboard</div>} />
+```
+
+- create <b>dashboard</b> directory in pages
+- create AddJob,AllJobs,Profile,Stats,SharedLayout, index.js
+- setup basic returns
+
+```js
+return <h1>Add Job Page</h1>;
+```
+
+- export all with index.js (just like components)
+- import all pages in App.js
+
+#### Nested Structure
+
+```js
+App.js
+
+<Route path='/' >
+  <Route path="stats" element={<Stats />} />
+  <Route path='all-jobs' element={<AllJobs />}></Route>
+  <Route path='add-job' element={<AddJob />}></Route>
+  <Route path='profile' element={<Profile />}></Route>
+</Route>
+```
+
+#### Shared Layout
+
+```js
+App.js
+
+<Route path='/' element={<SharedLayout/>} >
+```
+
+```js
+SharedLayout.js;
+
+import { Outlet, Link } from 'react-router-dom';
+import Wrapper from '../../assets/wrappers/SharedLayout';
+
+const SharedLayout = () => {
+  return (
+    <Wrapper>
+      <nav>
+        <Link to='all-jobs'>all jobs</Link>
+        <Link to='add-job'>all jobs</Link>
+      </nav>
+      <Outlet />
+    </Wrapper>
+  );
+};
+
+export default SharedLayout;
+```
+
+```js
+App.js
+
+<Route index element={<Stats/>} >
+```
+
+#### Protected Route
+
+- create ProtectedRoute.js in pages
+- import/export
+- wrap SharedLayout in App.js
+
+```js
+<Route
+  path='/'
+  element={
+    <ProtectedRoute>
+      <SharedLayout />
+    </ProtectedRoute>
+  }
+/>
+```
+
+```js
+ProtectedRoute.js;
+
+import { Navigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAppContext();
+  if (!user) {
+    return <Navigate to='/landing' />;
+  }
+  return children;
+};
+```

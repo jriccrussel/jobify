@@ -25,7 +25,6 @@ const Dashboard = () => {
       {/* <Logo/> */}
       Dashboard
     </div>
-  )
-}
+  )}
 
 export default Dashboard
