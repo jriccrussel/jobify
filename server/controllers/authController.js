@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import User from '../models/User.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError, UnAuthenticatedError } from '../errors/index.js'
 
@@ -30,11 +30,11 @@ import { BadRequestError, NotFoundError, UnAuthenticatedError } from '../errors/
 
 // const register = async (req, res, next) => {
 //     try {
-//         const user = await User.create(req.body);
-//         console.log("%c Line:6 🥖 user", "color:#b03734", user);
-//         res.status(201).json({ user });
+//         const user = await User.create(req.body)
+//         console.log("%c Line:6 🥖 user", "color:#b03734", user)
+//         res.status(201).json({ user })
 //     } catch (err) {
-//         // res.status(500).json({ msg: 'There wast an error' });
+//         // res.status(500).json({ msg: 'There wast an error' })
 //         // errors ma pasa didto erro-handler middleware
 //         next(err)
 //     }
@@ -49,14 +49,14 @@ const register = async (req, res) => {
         throw new BadRequestError('Please provide all values')
     }
 
-    const userAlreadyExists = await User.findOne({ email });
+    const userAlreadyExists = await User.findOne({ email })
 
     if (userAlreadyExists) {
         throw new BadRequestError('Email already in use')
     }
 
-    const user = await User.create({ name, email, password });
-    // console.log("%c Line:59 🧀 user", "color:#6ec1c2", user);
+    const user = await User.create({ name, email, password })
+    // console.log("%c Line:59 🧀 user", "color:#6ec1c2", user)
 
     // add token
     const token = user.createJWT()
@@ -70,7 +70,7 @@ const register = async (req, res) => {
         }, 
         token, 
         location: user.location 
-    });
+    })
 }
 
 const login = async (req, res) => {
@@ -84,7 +84,7 @@ const login = async (req, res) => {
     // const user = await User.findOne({ email })
     // para ma apil ang password add ta .select('+password') para ma apil ang password(sa server ra nato makita ug ma apil and dili ma apil ug dili makita sa client) and also It prevents showing password from the user instance in the response body by default. Therefore, you aren't exposing it to the client(which means dili makita sa ato client) when you have your entire user object(which would contain the password stored in the mongo db), token, and location.
     const user = await User.findOne({ email }).select('+password')
-    // console.log("%c Line:59 🍑 user", "color:#ea7e5c", user);
+    // console.log("%c Line:59 🍑 user", "color:#ea7e5c", user)
 
     if(!user) {
         throw new UnAuthenticatedError('Invalid Credentials')
@@ -93,7 +93,7 @@ const login = async (req, res) => {
     const isPasswordCorrect = await user.comparePassword(password)
 
     if(!isPasswordCorrect) {
-        throw new UnAuthenticated('Invalid Credentials')
+        throw new UnAuthenticatedError('Invalid Credentials')
     }
 
     const token = user.createJWT()
@@ -106,8 +106,34 @@ const login = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    console.log("%c Line:109 🍔 req.user", "color:#4fff4B", req.user);
-    res.send('update user')
+    // console.log("%c Line:109 🍔 req.user", "color:#4fff4B", req.user)
+    // res.send('update user')
+    const { email, name, lastName, location } = req.body
+    if (!email || !name || !lastName || !location) {
+        throw new BadRequestError('Please provide all values')
+    }
+
+    const user = await User.findOne({ _id: req.user.userId })
+
+    // assign nato each corresponding keys and values
+    user.email = email
+    user.name = name
+    user.lastName = lastName
+    user.location = location
+
+    await user.save()
+
+    // various setups
+    // in this case only id
+    // if other properties included, must re-generate
+
+    const token = user.createJWT()
+
+    res.status(StatusCodes.OK).json({
+        user,
+        token,
+        location: user.location,
+    })
 }
 
 export{ register, login, updateUser }

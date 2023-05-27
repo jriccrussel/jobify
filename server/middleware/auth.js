@@ -39,7 +39,7 @@ const auth = async (req, res, next) => {
         // req.user will now have access sa payload(sulod sa payload naa dre ang `{ userId: ... }`)
         // req.user = payload
         // console.log("%c Line:33 🎂 payload.userId", "color:#3f7cff", payload.userId);
-        console.log("%c Line:39 🍪 req.user", "color:#465975", req.user);
+        // console.log("%c Line:39 🍪 req.user", "color:#465975", req.user);
 
         // req.user will now have access sa `{ userId: ... }`(or ang payload)
         req.user = { userId: payload.userId }
