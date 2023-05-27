@@ -1847,3 +1847,79 @@ return (
   </div>
 );
 ```
+
+#### Nav Links Component
+
+- in <b>components</b> create NavLinks.js
+- styles still set from Wrapper
+- also can setup in links.js, preference
+
+```js
+import { NavLink } from 'react-router-dom';
+import links from '../utils/links';
+
+const NavLinks = ({ toggleSidebar }) => {
+  return (
+    <div className='nav-links'>
+      {links.map((link) => {
+        const { text, path, id, icon } = link;
+
+        return (
+          <NavLink
+            to={path}
+            key={id}
+            onClick={toggleSidebar}
+            className={({ isActive }) =>
+              isActive ? 'nav-link active' : 'nav-link'
+            }
+          >
+            <span className='icon'>{icon}</span>
+            {text}
+          </NavLink>
+        );
+      })}
+    </div>
+  );
+};
+
+export default NavLinks;
+```
+
+```js
+SmallSidebar.js
+
+import NavLinks from './NavLinks'
+
+return <NavLinks toggleSidebar={toggleSidebar}>
+```
+
+#### Big Sidebar
+
+```js
+import { useAppContext } from '../context/appContext';
+import NavLinks from './NavLinks';
+import Logo from '../components/Logo';
+import Wrapper from '../assets/wrappers/BigSidebar';
+
+const BigSidebar = () => {
+  const { showSidebar } = useAppContext();
+  return (
+    <Wrapper>
+      <div
+        className={
+          showSidebar ? 'sidebar-container ' : 'sidebar-container show-sidebar'
+        }
+      >
+        <div className='content'>
+          <header>
+            <Logo />
+          </header>
+          <NavLinks />
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
+
+export default BigSidebar;
+```
