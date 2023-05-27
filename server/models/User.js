@@ -47,7 +47,12 @@ UserSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, salt)
 })
 
-// kini cya what it does it will create a token
+// kini cya what it does it will create a token and add nato ang `userId` as first arguement kai ang `userId` is a data we include as our payload in the `jwt`(we can use to access later ang `userId`)
+
+// why g apil nato ang `userId`? kai ang `userId` is part of custom claims meaning typically contains information about the entity or data associated with the token.
+
+// `claims` or `custom claims` These claims can hold any additional data that you want to associate with the token, such as user roles, permissions, or any other relevant information.
+
 // token is uniquely to that user so every time ang user register or login the token will send to server then signs the JWT using a secret key that only the server knows. The JWT is then sent to the client, which stores it in local storage or a cookie.
 UserSchema.methods.createJWT = function(){
     // console.log(this)

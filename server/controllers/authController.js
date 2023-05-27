@@ -106,6 +106,7 @@ const login = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
+    console.log("%c Line:109 🍔 req.user", "color:#4fff4B", req.user);
     res.send('update user')
 }
 

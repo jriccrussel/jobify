@@ -1,29 +1,30 @@
-import cors from 'cors';
-import express from 'express';
-const app = express();
+import cors from 'cors'
+import express from 'express'
+const app = express()
 
 import dotenv from 'dotenv'
 dotenv.config()
 import 'express-async-errors'
-import morgan from 'morgan';
+import morgan from 'morgan'
 
 // db
-import connectDB from './db/connect.js';
+import connectDB from './db/connect.js'
 
 // authenticate
 
 
 // router
-import authRouter from './routes/authRoutes.js';
-import jobsRouter from './routes/jobsRoutes.js';
+import authRouter from './routes/authRoutes.js'
+import jobsRouter from './routes/jobsRoutes.js'
 
 // middleware
-import notFoundMiddleware from './middleware/not-found.js';
-import errorHandlerMiddleware from './middleware/error-handler.js';
+import notFoundMiddleware from './middleware/not-found.js'
+import errorHandlerMiddleware from './middleware/error-handler.js'
+import authenticateUser from './middleware/auth.js'
 
 // http logger middleware as we setup more routes and controllers is used to see what routes, methods and status codes and be shown sa terminal
 if(process.env.NODE_ENV !== 'production'){
-    app.use(morgan('dev'));
+    app.use(morgan('dev'))
 }
 
 
@@ -41,7 +42,7 @@ app.get('/', (req, res) => {
 // })
 
 app.use('/api/v1/auth', authRouter)
-app.use('/api/v1/jobs', jobsRouter)
+app.use('/api/v1/jobs', authenticateUser, jobsRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
@@ -55,7 +56,7 @@ const start = async () => {
         await connectDB(process.env.MONGO_URL)
         app.listen(port, () => console.log(`Server listening on ${port}...`))
     } catch(err){
-        console.log("%c Line:29 🍕 err", "color:#e41a6a", err);
+        console.log("%c Line:29 🍕 err", "color:#e41a6a", err)
     }
 }
 

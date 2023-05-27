@@ -1860,15 +1860,11 @@ return (
 
 ```js
 <NavLink
-to={path}
-key={id}
-onClick={toggleSidebar}
-className={({ isActive }) =>
-isActive ? 'nav-link active' : 'nav-link'}
-
-
-end
->
+  to={path}
+  key={id}
+  onClick={toggleSidebar}
+  className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+/>
 ```
 
 ```js
@@ -1939,4 +1935,134 @@ const BigSidebar = () => {
 };
 
 export default BigSidebar;
+```
+
+#### Authenticate User Setup
+
+- create auth.js in <b>middleware</b>
+
+```js
+const auth = async (req, res, next) => {
+  console.log('authenticate user');
+  next();
+};
+
+export default auth;
+```
+
+```js
+authRoutes.js;
+
+import authenticateUser from '../middleware/auth.js';
+
+router.route('/updateUser').patch(authenticateUser, updateUser);
+```
+
+- two options
+
+```js
+server.js;
+
+import authenticateUser from './middleware/auth.js';
+app.use('/api/v1/jobs', authenticateUser, jobsRouter);
+```
+
+```js
+jobsRoutes.js;
+
+import authenticateUser from './middleware/auth.js';
+
+// all routes !!!!
+
+router.route('/stats').get(authenticateUser, showStats);
+```
+
+#### Auth - Bearer Schema
+
+```js
+Postman
+
+Headers
+
+Authorization: Bearer <token>
+
+```
+
+```js
+auth.js;
+
+const auth = async (req, res, next) => {
+  const headers = req.headers;
+  const authHeader = req.headers.authorization;
+  console.log(headers);
+  console.log(authHeader);
+  next();
+};
+```
+
+#### Postman - Set Token Programmatically
+
+- register and login routes
+- Tests
+
+```js
+const jsonData = pm.response.json();
+pm.globals.set('token', jsonData.token);
+
+Type: Bearer;
+
+Token: {
+  {
+    token;
+  }
+}
+```
+
+#### Unauthenticated Error
+
+```js
+auth.js;
+
+import { UnAuthenticatedError } from '../errors/index.js';
+
+const auth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    // why, well is it 400 or 404?
+    // actually 401
+    throw new UnAuthenticatedError('Authentication Invalid');
+  }
+
+  next();
+};
+```
+
+#### Auth Middleware
+
+```js
+import jwt from 'jsonwebtoken';
+import { UnAuthenticatedError } from '../errors/index.js';
+
+const auth = async (req, res, next) => {
+  // check header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
+    throw new UnauthenticatedError('Authentication invalid');
+  }
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log(payload)
+    // attach the user request object
+    // req.user = payload
+    req.user = { userId: payload.userId };
+    next();
+  } catch (error) {
+    throw new UnauthenticatedError('Authentication invalid');
+  }
+};
+
+export default auth;
 ```
