@@ -15,14 +15,14 @@ const auth = async (req, res, next) => {
     // }
 
     // check header
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer')) {
-      throw new UnAuthenticatedError('Authentication invalid');
+      throw new UnAuthenticatedError('Authentication invalid')
     }
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1]
   
     try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
         // why need nato ang `{ userId: ... }`?
         // Remember `jwt.sign` specifically ang `{ userId: this._id }`(didto sa UserSchema.methods.createJWT from User model) since part man ang `{ userId: ... }` sa ato `custom claims` meaning naa tay always access sa `{ userId: ... }` kai part man cya as payload sa `jwt`
 
@@ -30,21 +30,21 @@ const auth = async (req, res, next) => {
 
         // !!!IMPORTANT!! you can include the userId as a property in the token's payload when calling the sign method, and then verify the token later to access the userId from the decoded payload.
 
-        // console.log("%c Line:27 🍌 jwt", "color:#e41a6a", jwt);
-        // console.log("%c Line:25 🍐 payload", "color:#e41a6a", payload);
+        // console.log("%c Line:27 🍌 jwt", "color:#e41a6a", jwt)
+        // console.log("%c Line:25 🍐 payload", "color:#e41a6a", payload)
 
         // attach the user request object
         // req.user will now have access sa payload(sulod sa payload naa dre ang `{ userId: ... }`)
         // req.user = payload
-        // console.log("%c Line:33 🎂 payload.userId", "color:#3f7cff", payload.userId);
-        // console.log("%c Line:39 🍪 req.user", "color:#465975", req.user);
+        // console.log("%c Line:33 🎂 payload.userId", "color:#3f7cff", payload.userId)
+        // console.log("%c Line:39 🍪 req.user", "color:#465975", req.user)
 
         // req.user will now have access sa `{ userId: ... }`(or ang payload)
-        req.user = { userId: payload.userId };
+        req.user = { userId: payload.userId }
 
-        next();
+        next()
     } catch (error) {
-        throw new UnAuthenticatedError('Authentication invalid');
+        throw new UnAuthenticatedError('Authentication invalid')
     }
 }
 

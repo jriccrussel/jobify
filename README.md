@@ -2198,3 +2198,95 @@ const Profile = () => {
 
 export default Profile;
 ```
+
+#### Bearer Token - Manual Approach
+
+```js
+appContext.js;
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await axios.patch('/api/v1/auth/updateUser', currentUser, {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+    console.log(data);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Global Setup
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+axios.defaults.headers['Authorization'] = `Bearer ${state.token}`;
+```
+
+#### Axios - Setup Instance
+
+```js
+AppContext.js;
+
+const authFetch = axios.create({
+  baseURL: '/api/v1',
+  headers: {
+    Authorization: `Bearer ${state.token}`,
+  },
+});
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await authFetch.patch('/auth/updateUser', currentUser);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Interceptors
+
+- will use instance, but can use axios instead
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+// response interceptor
+authFetch.interceptors.request.use(
+  (config) => {
+    config.headers['Authorization'] = `Bearer ${state.token}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+// response interceptor
+authFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error.response);
+    if (error.response.status === 401) {
+      console.log('AUTH ERROR');
+    }
+    return Promise.reject(error);
+  }
+);
+```

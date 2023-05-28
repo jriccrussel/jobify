@@ -39,6 +39,50 @@ const AppContext = createContext()
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
+    // axios global setup for headers
+    // authorization para sa headers
+    // axios.defaults.headers['Authorization'] = `Bearer ${state.token}`
+
+    // axios instance and can be used globally(also needed when using an interceptor)
+    const authFetch = axios.create({
+        baseURL: '/api/v1',
+        headers: {
+          Authorization: `Bearer ${state.token}`,
+        },
+    })
+
+    // axios interceptor(in a way its like a middleware)
+    // it means is that you can attach some functionality as your request leave the application and as the requests are coming back. So in a way, you can think of it as a middleware.
+    
+    // request
+    // we do something before the request is sent
+    authFetch.interceptors.request.use(
+        (config) => {
+            // add the headers before the request is sent
+            config.headers['Authorization'] = `Bearer ${state.token}`
+
+            return config
+        },
+        (error) => {
+            return Promise.reject(error)
+        }
+    )
+
+    // response
+    // we get the response data after we made the request
+    authFetch.interceptors.response.use(
+        (response) => {
+            return response
+        },
+        (error) => {
+            console.log("%c Line:74 🍫 error", "color:#ea7e5c", error.response)
+            if (error.response.status === 401) {
+                console.log("%c Line:76 🥪 error", "color:#7f2b82", 'AUTH ERROR')
+            }
+            return Promise.reject(error)
+        }
+    )
+
     const displayAlert = () => {
         dispatch({ type: DISPLAY_ALERT })
         clearAlert()
@@ -132,7 +176,25 @@ const AppProvider = ({ children }) => {
     }
 
     const updateUser = async (currentUser) => {
-        console.log("%c Line:135 🍩 currentUser", "color:#33a5ff", currentUser);
+        // console.log("%c Line:135 🍩 currentUser", "color:#33a5ff", currentUser)
+        try {
+            // manual approach
+            // const { data } = await axios.patch('/api/v1/auth/updateUser', currentUser, {
+            //     headers: {
+            //         Authorization: `Bearer ${state.token}`,
+            //     },
+            // })
+
+            // global headers approach
+            // const { data } = await axios.patch('/api/v1/auth/updateUser', currentUser)
+
+            // using instance
+            const { data } = await authFetch.patch('/auth/updateUser', currentUser)
+
+            console.log("%c Line:138 🍉 data", "color:#93c0a4", data)
+        } catch (error) {
+            console.log("%c Line:144 🍧 error", "color:#ed9ec7", error.response)
+        }
     }
 
     const toggleSidebar = () => {
