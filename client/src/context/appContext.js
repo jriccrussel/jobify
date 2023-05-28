@@ -131,6 +131,10 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
+    const updateUser = async (currentUser) => {
+        console.log("%c Line:135 🍩 currentUser", "color:#33a5ff", currentUser);
+    }
+
     const toggleSidebar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
     }
@@ -147,6 +151,7 @@ const AppProvider = ({ children }) => {
             registerUser,
             loginUser,
             setupUser,
+            updateUser,
             toggleSidebar,
             logoutUser
         }}>
