@@ -17,7 +17,12 @@ import {
     LOGOUT_USER,
     UPDATE_USER_BEGIN,
     UPDATE_USER_SUCCESS,
-    UPDATE_USER_ERROR
+    UPDATE_USER_ERROR,
+    HANDLE_CHANGE,
+    CLEAR_VALUES,
+    CREATE_JOB_BEGIN,
+    CREATE_JOB_SUCCESS,
+    CREATE_JOB_ERROR
 } from "./actions"
 
 // set as default
@@ -33,8 +38,16 @@ const initialState = {
     user: user ? JSON.parse(user) : null,
     token: token,
     userLocation: userLocation || '',
-    jobLocation: userLocation || '',
     showSidebar: false,
+    isEditing: false,
+    editJobId: '',
+    position: '',
+    company: '',
+    jobLocation: userLocation || '',
+    jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+    jobType: 'full-time',
+    statusOptions: ['pending', 'interview', 'declined'],
+    status: 'pending',
 }
 
 const AppContext = createContext()
@@ -222,6 +235,46 @@ const AppProvider = ({ children }) => {
         }
         clearAlert()
     }
+    // from CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR
+    const createJob = async () => {
+        dispatch({ type: CREATE_JOB_BEGIN })
+        try {
+            const { position, company, jobLocation, jobType, status } = state
+        
+            await authFetch.post('/jobs', {
+                company,
+                position,
+                jobLocation,
+                jobType,
+                status,
+            })
+            dispatch({
+                type: CREATE_JOB_SUCCESS,
+            })
+            // call function instead clearValues()
+            dispatch({ type: CLEAR_VALUES })
+        } catch (error) {
+            if (error.response.status === 401) return
+            dispatch({
+                type: CREATE_JOB_ERROR,
+                payload: { msg: error.response.data.msg },
+            })
+        }
+        clearAlert()
+    }
+
+    // from HANDLE_CHANGE
+    const handleChange = ({ name, value }) => {
+        dispatch({
+          type: HANDLE_CHANGE,
+          payload: { name, value },
+        })
+    }
+
+    // from CLEAR_VALUES
+    const clearValues = () => {
+        dispatch({ type: CLEAR_VALUES })
+    }
 
     const toggleSidebar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
@@ -241,7 +294,10 @@ const AppProvider = ({ children }) => {
             setupUser,
             updateUser,
             toggleSidebar,
-            logoutUser
+            logoutUser,
+            handleChange,
+            clearValues,
+            createJob
         }}>
             {children}
         </AppContext.Provider>
