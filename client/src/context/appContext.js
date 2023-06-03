@@ -14,7 +14,10 @@ import {
     SETUP_USER_SUCCESS,
     SETUP_USER_ERROR,
     TOGGLE_SIDEBAR,
-    LOGOUT_USER
+    LOGOUT_USER,
+    UPDATE_USER_BEGIN,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR
 } from "./actions"
 
 // set as default
@@ -75,9 +78,11 @@ const AppProvider = ({ children }) => {
             return response
         },
         (error) => {
-            console.log("%c Line:74 🍫 error", "color:#ea7e5c", error.response)
+            // console.log("%c Line:74 🍫 error", "color:#ea7e5c", error.response)
+            // if ang token nag error 401 then logout ang user
             if (error.response.status === 401) {
-                console.log("%c Line:76 🥪 error", "color:#7f2b82", 'AUTH ERROR')
+                // console.log("%c Line:76 🥪 error", "color:#7f2b82", 'AUTH ERROR')
+                logoutUser()
             }
             return Promise.reject(error)
         }
@@ -177,6 +182,7 @@ const AppProvider = ({ children }) => {
 
     const updateUser = async (currentUser) => {
         // console.log("%c Line:135 🍩 currentUser", "color:#33a5ff", currentUser)
+        dispatch({ type: UPDATE_USER_BEGIN })
         try {
             // manual approach
             // const { data } = await axios.patch('/api/v1/auth/updateUser', currentUser, {
@@ -190,10 +196,29 @@ const AppProvider = ({ children }) => {
 
             // using instance
             const { data } = await authFetch.patch('/auth/updateUser', currentUser)
+            // console.log("%c Line:138 🍉 data", "color:#93c0a4", data)
 
-            console.log("%c Line:138 🍉 data", "color:#93c0a4", data)
+            const { user, location, token } = data
+
+            dispatch({
+                type: UPDATE_USER_SUCCESS,
+                payload: { user, location, token },
+            })
+
+            addUserToLocalStorage({ user, location, token })
+            // addUserToLocalStorage({ user, location, token: initialState.token })
         } catch (error) {
-            console.log("%c Line:144 🍧 error", "color:#ed9ec7", error.response)
+            // console.log("%c Line:144 🍧 error", "color:#ed9ec7", error.response)
+            // dispatch({
+            //     type: UPDATE_USER_ERROR,
+            //     payload: { msg: error.response.data.msg },
+            // })
+            if (error.response.status !== 401) {
+                dispatch({
+                    type: UPDATE_USER_ERROR,
+                    payload: { msg: error.response.data.msg },
+                })
+            }
         }
     }
 
