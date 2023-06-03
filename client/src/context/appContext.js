@@ -220,6 +220,7 @@ const AppProvider = ({ children }) => {
                 })
             }
         }
+        clearAlert()
     }
 
     const toggleSidebar = () => {
