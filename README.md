@@ -2399,3 +2399,75 @@ const updateUser = async (currentUser) => {
   clearAlert();
 };
 ```
+
+#### Job Model
+
+- Job Model
+
+```js
+Job.js;
+
+import mongoose from 'mongoose';
+
+const JobSchema = new mongoose.Schema(
+  {
+    company: {
+      type: String,
+      required: [true, 'Please provide company name'],
+      maxlength: 50,
+    },
+    position: {
+      type: String,
+      required: [true, 'Please provide position'],
+      maxlength: 100,
+    },
+    status: {
+      type: String,
+      enum: ['interview', 'declined', 'pending'],
+      default: 'pending',
+    },
+
+    jobType: {
+      type: String,
+      enum: ['full-time', 'part-time', 'remote', 'internship'],
+      default: 'full-time',
+    },
+    jobLocation: {
+      type: String,
+      default: 'my city',
+      required: true,
+    },
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'Please provide user'],
+    },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model('Job', JobSchema);
+```
+
+#### Create Job
+
+```js
+jobsController.js;
+
+import Job from '../models/Job.js';
+import { StatusCodes } from 'http-status-codes';
+import { BadRequestError, NotFoundError } from '../errors/index.js';
+
+const createJob = async (req, res) => {
+  const { position, company } = req.body;
+
+  if (!position || !company) {
+    throw new BadRequestError('Please Provide All Values');
+  }
+
+  req.body.createdBy = req.user.userId;
+
+  const job = await Job.create(req.body);
+  res.status(StatusCodes.CREATED).json({ job });
+};
+```
