@@ -2849,3 +2849,30 @@ if (action.type === CREATE_JOB_ERROR) {
   };
 }
 ```
+
+#### Get All Jobs
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const jobs = await Job.find({ createdBy: req.user.userId });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+};
+```
+
+#### Jobs State Values
+
+```js
+appContext.js;
+
+const initialState = {
+  jobs: [],
+  totalJobs: 0,
+  numOfPages: 1,
+  page: 1,
+};
+```
