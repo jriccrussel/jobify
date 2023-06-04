@@ -102,6 +102,7 @@ const AppProvider = ({ children }) => {
             // if ang token nag error 401 then logout ang user
             if (error.response.status === 401) {
                 // console.log("%c Line:76 🥪 error", "color:#7f2b82", 'AUTH ERROR')
+                // from LOGOUT_USER
                 logoutUser()
             }
             return Promise.reject(error)
@@ -314,6 +315,7 @@ const AppProvider = ({ children }) => {
         } catch (error) {
             console.log(error.response)
             // comment kai when ever we had an error 400 or 401 it will logout automatically and its kinda annoying since we only want to fetch the getJobs 
+            // from LOGOUT_USER
             // logoutUser()
         }
         // clear the alert after fetching the getJobs
@@ -340,10 +342,12 @@ const AppProvider = ({ children }) => {
         console.log(`delete : ${id}`)
     }
 
+    // from TOGGLE_SIDEBAR
     const toggleSidebar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
     }
-
+    
+    // from LOGOUT_USER
     const logoutUser = () => {
         dispatch({ type: LOGOUT_USER })
         removeUserFromLocalStorage()
