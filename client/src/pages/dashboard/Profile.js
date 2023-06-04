@@ -14,10 +14,11 @@ const Profile = () => {
     e.preventDefault()
     if (!name || !email || !lastName || !location) {
       // test and remove temporary
+      // from DISPLAY_ALERT
       displayAlert()
       return
     }
-
+    // from UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR
     updateUser({ name, email, lastName, location })
   }
 

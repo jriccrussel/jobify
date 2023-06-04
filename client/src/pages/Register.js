@@ -33,6 +33,7 @@ const Register = () => {
     } = values
 
     if(!email || !password || (!isMember && !name)){
+      // from DISPLAY_ALERT
       displayAlert()
       return
     }
@@ -41,14 +42,18 @@ const Register = () => {
 
     if(isMember){
       // console.log("%c Line:46 🥕", "color:#ea7e5c", 'already a member');
+      // from LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR
       // loginUser(currentUser)
+      // from SETUP_USER_BEGIN, SETUP_USER_SUCCESS, SETUP_USER_ERROR
       setupUser({
         currentUser,
         endPoint: 'login',
         alertText: 'Login Successful! Redirecting...'
       })
     } else {
+      // from REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR
       // registerUser(currentUser)
+      // from SETUP_USER_BEGIN, SETUP_USER_SUCCESS, SETUP_USER_ERROR
       setupUser({
         currentUser,
         endPoint: 'register',

@@ -24,7 +24,8 @@ import {
     CREATE_JOB_SUCCESS,
     CREATE_JOB_ERROR,
     GET_JOBS_BEGIN,
-    GET_JOBS_SUCCESS
+    GET_JOBS_SUCCESS,
+    SET_EDIT_JOB
 } from "./actions"
 
 // set as default
@@ -106,12 +107,15 @@ const AppProvider = ({ children }) => {
             return Promise.reject(error)
         }
     )
-
+    
+    // from DISPLAY_ALERT
     const displayAlert = () => {
         dispatch({ type: DISPLAY_ALERT })
+        // from CLEAR_ALERT
         clearAlert()
     }
 
+    // from CLEAR_ALERT
     const clearAlert = () => {
         setTimeout(() => dispatch({ type: CLEAR_ALERT }), 3000)
     }
@@ -128,6 +132,7 @@ const AppProvider = ({ children }) => {
         localStorage.removeItem('location')
     }
 
+    // from REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR
     const registerUser = async (currentUser) => {
         // console.log("%c Line:30 🍒 currentUser", "color:#b03734", currentUser)
         dispatch({ type: REGISTER_USER_BEGIN })
@@ -154,9 +159,11 @@ const AppProvider = ({ children }) => {
                 payload: { msg: error.response.data.msg }
             })
         }
+        // from CLEAR_ALERT
         clearAlert()
     }
 
+    // from LOGIN_USER_BEGIN, LOGIN_USER_SUCCESS, LOGIN_USER_ERROR
     const loginUser = async (currentUser) => {
         dispatch({ type: LOGIN_USER_BEGIN })
         try {
@@ -175,9 +182,11 @@ const AppProvider = ({ children }) => {
                 payload: { msg: error.response.data.msg },
             })
         }
+        // from CLEAR_ALERT
         clearAlert()
     }
-
+    
+    // from SETUP_USER_BEGIN, SETUP_USER_SUCCESS, SETUP_USER_ERROR
     const setupUser = async ({ currentUser, endPoint, alertText}) => {
         dispatch({ type: SETUP_USER_BEGIN })
         try {
@@ -196,9 +205,11 @@ const AppProvider = ({ children }) => {
                 payload: { msg: error.response.data.msg },
             })
         }
+        // from CLEAR_ALERT
         clearAlert()
     }
-
+    
+    // from UPDATE_USER_BEGIN, UPDATE_USER_SUCCESS, UPDATE_USER_ERROR
     const updateUser = async (currentUser) => {
         // console.log("%c Line:135 🍩 currentUser", "color:#33a5ff", currentUser)
         dispatch({ type: UPDATE_USER_BEGIN })
@@ -239,6 +250,7 @@ const AppProvider = ({ children }) => {
                 })
             }
         }
+        // from CLEAR_ALERT
         clearAlert()
     }
     // from CREATE_JOB_BEGIN, CREATE_JOB_SUCCESS, CREATE_JOB_ERROR
@@ -266,6 +278,7 @@ const AppProvider = ({ children }) => {
                 payload: { msg: error.response.data.msg },
             })
         }
+        // from CLEAR_ALERT
         clearAlert()
     }
 
@@ -282,6 +295,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CLEAR_VALUES })
     }
 
+    // from GET_JOBS_BEGIN, GET_JOBS_SUCCESS
     const getJobs = async () => {
         let url = `/jobs`
       
@@ -303,15 +317,23 @@ const AppProvider = ({ children }) => {
             // logoutUser()
         }
         // clear the alert after fetching the getJobs
+        // from CLEAR_ALERT
         clearAlert()
     }
 
     useEffect(() => {
+        // from GET_JOBS_BEGIN, GET_JOBS_SUCCESS
         getJobs()
     }, [])
 
+    // from SET_EDIT_JOB
     const setEditJob = (id) => {
-        console.log(`set edit job : ${id}`)
+        // console.log(`set edit job : ${id}`)
+        dispatch({ type: SET_EDIT_JOB, payload: { id } })
+    }
+
+    const editJob = () => {
+        console.log('edit job')
     }
 
     const deleteJob = (id) =>{
@@ -342,6 +364,7 @@ const AppProvider = ({ children }) => {
             createJob,
             getJobs,
             setEditJob,
+            editJob,
             deleteJob
         }}>
             {children}

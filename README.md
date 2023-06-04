@@ -3153,3 +3153,59 @@ return (
   </div>
 );
 ```
+
+#### SetEditJob
+
+```js
+actions.js;
+export const SET_EDIT_JOB = 'SET_EDIT_JOB';
+```
+
+```js
+appContext.js
+
+const setEditJob = (id) => {
+  dispatch({ type: SET_EDIT_JOB, payload: { id } })
+}
+const editJob = () => {
+  console.log('edit job')
+}
+value={{editJob}}
+```
+
+```js
+reducer.js;
+
+if (action.type === SET_EDIT_JOB) {
+  const job = state.jobs.find((job) => job._id === action.payload.id);
+  const { _id, position, company, jobLocation, jobType, status } = job;
+  return {
+    ...state,
+    isEditing: true,
+    editJobId: _id,
+    position,
+    company,
+    jobLocation,
+    jobType,
+    status,
+  };
+}
+```
+
+```js
+AddJob.js;
+const { isEditing, editJob } = useAppContext();
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (!position || !company || !jobLocation) {
+    displayAlert();
+    return;
+  }
+  if (isEditing) {
+    editJob();
+    return;
+  }
+  createJob();
+};
+```
