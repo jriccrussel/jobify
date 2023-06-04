@@ -299,14 +299,24 @@ const AppProvider = ({ children }) => {
             })
         } catch (error) {
             console.log(error.response)
-            logoutUser()
+            // comment kai when ever we had an error 400 or 401 it will logout automatically and its kinda annoying since we only want to fetch the getJobs 
+            // logoutUser()
         }
+        // clear the alert after fetching the getJobs
         clearAlert()
     }
 
     useEffect(() => {
         getJobs()
     }, [])
+
+    const setEditJob = (id) => {
+        console.log(`set edit job : ${id}`)
+    }
+
+    const deleteJob = (id) =>{
+        console.log(`delete : ${id}`)
+    }
 
     const toggleSidebar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
@@ -330,7 +340,9 @@ const AppProvider = ({ children }) => {
             handleChange,
             clearValues,
             createJob,
-            getJobs
+            getJobs,
+            setEditJob,
+            deleteJob
         }}>
             {children}
         </AppContext.Provider>
