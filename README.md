@@ -2876,3 +2876,63 @@ const initialState = {
   page: 1,
 };
 ```
+
+#### Get All Jobs Request
+
+```js
+actions.js;
+export const GET_JOBS_BEGIN = 'GET_JOBS_BEGIN';
+export const GET_JOBS_SUCCESS = 'GET_JOBS_SUCCESS';
+```
+
+```js
+appContext.js
+
+import React, { useReducer, useContext, useEffect } from 'react'
+
+const getJobs = async () => {
+  let url = `/jobs`
+
+  dispatch({ type: GET_JOBS_BEGIN })
+  try {
+    const { data } = await authFetch(url)
+    const { jobs, totalJobs, numOfPages } = data
+    dispatch({
+      type: GET_JOBS_SUCCESS,
+      payload: {
+        jobs,
+        totalJobs,
+        numOfPages,
+      },
+    })
+  } catch (error) {
+    console.log(error.response)
+    logoutUser()
+  }
+  clearAlert()
+}
+
+useEffect(() => {
+  getJobs()
+}, [])
+
+value={{getJobs}}
+
+```
+
+```js
+reducer.js;
+
+if (action.type === GET_JOBS_BEGIN) {
+  return { ...state, isLoading: true, showAlert: false };
+}
+if (action.type === GET_JOBS_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    jobs: action.payload.jobs,
+    totalJobs: action.payload.totalJobs,
+    numOfPages: action.payload.numOfPages,
+  };
+}
+```
