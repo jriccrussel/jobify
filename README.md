@@ -3275,3 +3275,78 @@ const updateJob = async (req, res) => {
   res.status(StatusCodes.OK).json({ job });
 };
 ```
+
+#### Check Permissions
+
+```js
+jobsController.js;
+
+const updateJob = async (req, res) => {
+  const { id: jobId } = req.params;
+  const { company, position, status } = req.body;
+
+  if (!position || !company) {
+    throw new BadRequestError('Please provide all values');
+  }
+  const job = await Job.findOne({ _id: jobId });
+
+  if (!job) {
+    throw new NotFoundError(`No job with id :${jobId}`);
+  }
+
+  // check permissions
+  // req.user.userId (string) === job.createdBy(object)
+  // throw new UnAuthenticatedError('Not authorized to access this route')
+
+  // console.log(typeof req.user.userId)
+  // console.log(typeof job.createdBy)
+
+  checkPermissions(req.user, job.createdBy);
+
+  const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(StatusCodes.OK).json({ updatedJob });
+};
+```
+
+- utils folder
+- checkPermissions.js
+- import in jobsController.js
+
+```js
+checkPermissions.js;
+
+import { UnAuthenticatedError } from '../errors/index.js';
+
+const checkPermissions = (requestUser, resourceUserId) => {
+  // if (requestUser.role === 'admin') return
+  if (requestUser.userId === resourceUserId.toString()) return;
+  throw new UnauthorizedError('Not authorized to access this route');
+};
+
+export default checkPermissions;
+```
+
+#### Remove/Delete Job
+
+```js
+jobsController.js;
+
+const deleteJob = async (req, res) => {
+  const { id: jobId } = req.params;
+
+  const job = await Job.findOne({ _id: jobId });
+
+  if (!job) {
+    throw new NotFoundError(`No job with id : ${jobId}`);
+  }
+
+  checkPermissions(req.user, job.createdBy);
+
+  await job.remove();
+  res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' });
+};
+```
