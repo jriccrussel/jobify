@@ -25,7 +25,38 @@ const getAllJobs = async (req, res) => {
 }
 
 const updateJob = async (req, res) => {
-    res.send('update job')
+    // res.send('update job')
+    const { id: jobId } = req.params
+
+    const { company, position } = req.body
+
+    if (!company || !position) {
+        throw new BadRequestError('Please Provide All Values')
+    }
+
+    const job = await Job.findOne({ _id: jobId })
+
+    if (!job) {
+        throw new NotFoundError(`No job with id ${jobId}`)
+    }
+ 
+    // check permissions
+    // using "findOneAndUpdate" does not trigger the ".save()" method
+    const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
+        new: true,
+        runValidators: true,
+    })
+
+    res.status(StatusCodes.OK).json({ updatedJob })
+
+        //  alternative approach
+        //  using this approach allows us to have control or freedom sa data we update
+        //  kini ra mga data(job.position, job.company, job.jobLocatio) pwdi ma update anything else other than data na g mention will have an error 
+//      job.position = position
+//      job.company = company
+//      job.jobLocation = jobLocation
+//      await job.save()
+//      res.status(StatusCodes.OK).json({ job })
 }
 
 const deleteJob = async (req, res) => {
