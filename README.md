@@ -3554,3 +3554,57 @@ const showStats = async (req, res) => {
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
 ```
+
+#### Show Stats - Function Setup
+
+```js
+actions.js;
+
+export const SHOW_STATS_BEGIN = 'SHOW_STATS_BEGIN';
+export const SHOW_STATS_SUCCESS = 'SHOW_STATS_SUCCESS';
+```
+
+```js
+appContext.js
+
+const initialState = {
+  stats: {},
+  monthlyApplications: []
+
+}
+
+const showStats = async () => {
+    dispatch({ type: SHOW_STATS_BEGIN })
+    try {
+      const { data } = await authFetch('/jobs/stats')
+      dispatch({
+        type: SHOW_STATS_SUCCESS,
+        payload: {
+          stats: data.defaultStats,
+          monthlyApplications: data.monthlyApplications,
+        },
+      })
+    } catch (error) {
+console.log(error.response)
+      // logoutUser()
+    }
+
+clearAlert()
+  }
+  value={{showStats}}
+```
+
+```js
+reducers.js;
+if (action.type === SHOW_STATS_BEGIN) {
+  return { ...state, isLoading: true, showAlert: false };
+}
+if (action.type === SHOW_STATS_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    stats: action.payload.stats,
+    monthlyApplications: action.payload.monthlyApplications,
+  };
+}
+```
