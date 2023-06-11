@@ -2,6 +2,7 @@ import Job from '../models/Job.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError } from '../errors/index.js'
 import checkPermissions from '../utils/checkPermissions.js'
+import mongoose from 'mongoose'
 
 const createJob = async (req, res) => {
     const { position, company } = req.body
@@ -76,10 +77,32 @@ const deleteJob = async (req, res) => {
   
     await job.deleteOne()
     res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' })
-}
+};
 
 const showStats = async (req, res) => {
-    res.send('show stats')
+    // res.send('show stats')
+
+    // aggregate - sa mongoose what it does is a series of steps is use for GROUPING, FILTERING, SORTING, PROJECTING and etc. para sa mga objects and arrays
+
+    // stats - what it does is to GROUP tanan nag match na id 
+    // $match - pangitaon nag match id or etc. and show ang tanan nag match na id 
+    // $group - e group ang two or more different objects or arrays in to one
+    // NOTE: sa $group -> $status - kwaon niya tanan status 'declined', 'interview', 'pending'; while ang count: { $sum: 1 } - ihapon or count niya tanan status by 1
+    let stats = await Job.aggregate([
+        { $match: { createdBy: new mongoose.Types.ObjectId(req.user.userId) } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+    ])
+
+    stats = stats.reduce((acc, curr) => {
+        console.log("%c Line:97 🍯 acc", "color:#f5ce50", acc);
+        // console.log("%c Line:97 🍻 curr", "color:#465975", curr);
+        const { _id: title, count } = curr
+        // create cya ug new property or object with ang 'title'(ang mga status) - key and ang 'count' - ang value; eg. { "declined": 22, ... }
+        acc[title] = count
+        return acc
+    }, {})
+
+    res.status(StatusCodes.OK).json({ stats })
 }
 
 export { createJob, deleteJob, getAllJobs, updateJob, showStats }

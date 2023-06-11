@@ -3381,7 +3381,69 @@ if (action.type === DELETE_JOB_BEGIN) {
 }
 ```
 
+#### Edit Job - Front-End
 
+```js
+actions.js;
+export const EDIT_JOB_BEGIN = 'EDIT_JOB_BEGIN';
+export const EDIT_JOB_SUCCESS = 'EDIT_JOB_SUCCESS';
+export const EDIT_JOB_ERROR = 'EDIT_JOB_ERROR';
+```
+
+```js
+appContext.js;
+const editJob = async () => {
+  dispatch({ type: EDIT_JOB_BEGIN });
+  try {
+    const { position, company, jobLocation, jobType, status } = state;
+
+    await authFetch.patch(`/jobs/${state.editJobId}`, {
+      company,
+      position,
+      jobLocation,
+      jobType,
+      status,
+    });
+    dispatch({
+      type: EDIT_JOB_SUCCESS,
+    });
+    dispatch({ type: CLEAR_VALUES });
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: EDIT_JOB_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === EDIT_JOB_BEGIN) {
+  return { ...state, isLoading: true };
+}
+if (action.type === EDIT_JOB_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'success',
+    alertText: 'Job Updated!',
+  };
+}
+if (action.type === EDIT_JOB_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: action.payload.msg,
+  };
+}
+```
 
 #### Create More Jobs
 
@@ -3421,4 +3483,74 @@ const start = async () => {
 };
 
 start();
+```
+#### Show Stats - Structure
+
+- aggregation pipeline
+- step by step
+- [Aggregation Pipeline](https://docs.mongodb.com/manual/core/aggregation-pipeline/)
+
+```js
+jobsController.js;
+
+import mongoose from 'mongoose';
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+
+  res.status(StatusCodes.OK).json({ stats });
+};
+```
+
+#### Show Stats - Object Setup
+
+- [Reduce Basics](https://youtu.be/3WkW9nrS2mw)
+- [Reduce Object Example ](https://youtu.be/5BFkp8JjLEY)
+
+```js
+jobsController.js;
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+
+  stats = stats.reduce((acc, curr) => {
+    const { _id: title, count } = curr;
+    acc[title] = count;
+    return acc;
+  }, {});
+
+  res.status(StatusCodes.OK).json({ stats });
+};
+```
+
+#### Show Stats - Default Stats
+
+```js
+jobsController.js;
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+  stats = stats.reduce((acc, curr) => {
+    const { _id: title, count } = curr;
+    acc[title] = count;
+    return acc;
+  }, {});
+
+  const defaultStats = {
+    pending: stats.pending || 0,
+    interview: stats.interview || 0,
+    declined: stats.declined || 0,
+  };
+  let monthlyApplications = [];
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
+};
 ```
