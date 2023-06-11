@@ -25,7 +25,8 @@ import {
     CREATE_JOB_ERROR,
     GET_JOBS_BEGIN,
     GET_JOBS_SUCCESS,
-    SET_EDIT_JOB
+    SET_EDIT_JOB,
+    DELETE_JOB_BEGIN
 } from "./actions"
 
 // set as default
@@ -338,8 +339,16 @@ const AppProvider = ({ children }) => {
         console.log('edit job')
     }
 
-    const deleteJob = (id) =>{
-        console.log(`delete : ${id}`)
+    // from DELETE_JOB_BEGIN
+    const deleteJob = async (jobId) =>{
+        // console.log(`delete : ${id}`)
+        dispatch({ type: DELETE_JOB_BEGIN })
+        try {
+            await authFetch.delete(`/jobs/${jobId}`)
+            getJobs()
+        } catch (error) {
+            logoutUser()
+        }
     }
 
     // from TOGGLE_SIDEBAR

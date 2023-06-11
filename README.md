@@ -3351,7 +3351,35 @@ const deleteJob = async (req, res) => {
 };
 ```
 
+#### Delete Job - Front-End
 
+```js
+actions.js;
+
+export const DELETE_JOB_BEGIN = 'DELETE_JOB_BEGIN';
+```
+
+```js
+appContext.js;
+
+const deleteJob = async (jobId) => {
+  dispatch({ type: DELETE_JOB_BEGIN });
+  try {
+    await authFetch.delete(`/jobs/${jobId}`);
+    getJobs();
+  } catch (error) {
+    logoutUser();
+  }
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === DELETE_JOB_BEGIN) {
+  return { ...state, isLoading: true };
+}
+```
 
 
 
