@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError } from '../errors/index.js'
 import checkPermissions from '../utils/checkPermissions.js'
 import mongoose from 'mongoose'
+import moment from 'moment'
 
 const createJob = async (req, res) => {
     const { position, company } = req.body
@@ -108,7 +109,41 @@ const showStats = async (req, res) => {
         declined: stats.declined || 0,
     }
     
-    let monthlyApplications = []
+    // $match - pangitaon nya tanan nag match na ID
+    // $group -> $year & $month - tanan nag match na ID gi group and naghimo ug bago object both ang $year & $month had a value of $createdAt; while count: { $sum: 1 } - ihapon or count niya tanan  $year & $month by 1 
+    // $sort - g sort by year and month 
+    // $limit - tanan nag match na ID only show 6
+    let monthlyApplications = await Job.aggregate([
+        { $match: { createdBy: new mongoose.Types.ObjectId(req.user.userId) } },
+        {
+            $group: {
+                _id: {
+                    year: {
+                        $year: '$createdAt',
+                    },
+                    month: {
+                        $month: '$createdAt',
+                    },
+                },
+                count: { $sum: 1 },
+            },
+        },
+        { $sort: { '_id.year': -1, '_id.month': -1 } },
+        { $limit: 6 },
+    ])
+
+    // g map and g format nato ang date ug turn in to one property na '{ date, ...}' 
+    monthlyApplications = monthlyApplications.map((item) => {
+        const {
+            _id: { year, month },
+            count,
+        } = item
+        // accepts 0-11
+        const date = moment().month(month - 1).year(year).format('MMM Y')
+
+        // { date: date } is same as { date, ...}
+        return { date, count }
+    }).reverse()
 
     res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications })
 }

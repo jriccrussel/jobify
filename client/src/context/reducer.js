@@ -26,7 +26,7 @@ import {
     DELETE_JOB_BEGIN,
     EDIT_JOB_BEGIN,
     EDIT_JOB_SUCCESS,
-    EDIT_JOB_ERROR,
+    EDIT_JOB_ERROR,    
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS
 } from "./actions"
@@ -277,7 +277,7 @@ const reducer = (state, action) => {
 
     // from SHOW_STATS_BEGIN
     if (action.type === SHOW_STATS_BEGIN) {
-        return { ...state, isLoading: true, showAlert: false };
+        return { ...state, isLoading: true, showAlert: false }
     }
 
     // from SHOW_STATS_SUCCESS
@@ -287,8 +287,8 @@ const reducer = (state, action) => {
             isLoading: false,
             stats: action.payload.stats,
             monthlyApplications: action.payload.monthlyApplications,
-        };
-    }
+        }
+      }
         
     throw new Error(`no such action ${action.type}`)
 }
