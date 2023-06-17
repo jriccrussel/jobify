@@ -62,6 +62,19 @@ const getAllJobs = async (req, res) => {
     let result = Job.find(queryObject)
 
     // chain sort conditions
+    // {{URL}}/jobs?status=all&jobType=full-time&sort=latest
+    if (sort === 'latest') {
+        result = result.sort('-createdAt')
+    }
+    if (sort === 'oldest') {
+        result = result.sort('createdAt')
+    }
+    if (sort === 'a-z') {
+        result = result.sort('position')
+    }
+    if (sort === 'z-a') {
+        result = result.sort('-position')
+    }
 
     // after na makita ang query then we 'await' the result
     const jobs = await result
