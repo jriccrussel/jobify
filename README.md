@@ -4010,3 +4010,38 @@ const getAllJobs = async (req, res) => {
 };
 ```
 
+#### Search Context Setup
+
+```js
+appContext.js
+
+const initialState = {
+  jobType: 'full-time',
+  jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
+  status: 'pending',
+  statusOptions: ['pending', 'interview', 'declined'],
+  //
+  //
+  //
+  search: '',
+  searchStatus: 'all',
+  searchType: 'all',
+  sort: 'latest',
+  sortOptions: ['latest', 'oldest', 'a-z', 'z-a'],
+}
+
+const clearFilters = () =>{
+console.log('clear filters')
+}
+
+value={{clearFilters}}
+
+// remember this function :)
+const handleChange = ({ name, value }) => {
+  dispatch({
+    type: HANDLE_CHANGE,
+    payload: { name, value },
+  })
+}
+
+```
