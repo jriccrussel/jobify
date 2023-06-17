@@ -40,6 +40,7 @@ import { BadRequestError, NotFoundError, UnAuthenticatedError } from '../errors/
 //     }
 // }
 
+// post - {{URL}}/auth/register
 const register = async (req, res) => {
 
     const { name, email, password } = req.body
@@ -73,6 +74,7 @@ const register = async (req, res) => {
     })
 }
 
+// post - {{URL}}/auth/login
 const login = async (req, res) => {
     // res.send('login user')
     const { email, password } = req.body
@@ -105,6 +107,7 @@ const login = async (req, res) => {
     res.status(StatusCodes.OK).json({ user, token, location: user.location })
 }
 
+// patch - {{URL}}/auth/updateUser
 const updateUser = async (req, res) => {
     // console.log("%c Line:109 🍔 req.user", "color:#4fff4B", req.user)
     // res.send('update user')

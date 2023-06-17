@@ -3904,3 +3904,64 @@ const getAllJobs = async (req, res) => {
     .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 };
 ```
+
+#### Status
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const { search, status, jobType, sort } = req.query;
+
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+
+  if (status !== 'all') {
+    queryObject.status = status;
+  }
+
+  // NO AWAIT
+  let result = Job.find(queryObject);
+
+  // chain sort conditions
+
+  const jobs = await result;
+
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+};
+```
+
+#### JobType
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const { search, status, jobType, sort } = req.query;
+
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+
+  if (status !== 'all') {
+    queryObject.status = status;
+  }
+  if (jobType !== 'all') {
+    queryObject.jobType = jobType;
+  }
+  // NO AWAIT
+  let result = Job.find(queryObject);
+
+  // chain sort conditions
+
+  const jobs = await result;
+
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+};
+```
+
