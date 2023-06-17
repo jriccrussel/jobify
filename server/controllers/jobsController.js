@@ -81,7 +81,6 @@ const getAllJobs = async (req, res) => {
     // setup pagination
     // const limit = 10
     // const skip = 1
-
     // result = result.skip(skip).limit(limit)
 
     // setup pagination
@@ -95,9 +94,13 @@ const getAllJobs = async (req, res) => {
     const jobs = await result
     // console.log("%c Line:66 🍤 jobs", "color:#3f7cff", jobs)
 
-    res
-        .status(StatusCodes.OK)
-        .json({ jobs, totalJobs: jobs.length, numOfPages: 1 })
+    const totalJobs = await Job.countDocuments(queryObject)
+    const numOfPages = Math.ceil(totalJobs / limit)
+
+    //res
+    //    .status(StatusCodes.OK)
+    //    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 })
+    res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages })
 }
 
 //  patch - {{URL}}/jobs/:id
