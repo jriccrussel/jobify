@@ -312,9 +312,18 @@ const AppProvider = ({ children }) => {
 
     // from GET_JOBS_BEGIN, GET_JOBS_SUCCESS
     const getJobs = async () => {
-        let url = `/jobs`
+
+        const { search, searchStatus, searchType, sort } = state
+        // let url = `/jobs`
+        let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`
+
+        // if naa or valid 'search" then 'url' add apil ang `&search=${search}`
+        if (search) {
+            url = url + `&search=${search}`
+        }
       
         dispatch({ type: GET_JOBS_BEGIN })
+
         try {
             const { data } = await authFetch(url)
             const { jobs, totalJobs, numOfPages } = data

@@ -5,11 +5,22 @@ import Job from './Job'
 import Wrapper from '../assets/wrappers/JobsContainer'
 
 const JobsContainer = () => {
-    const { getJobs, jobs, isLoading, page, totalJobs } = useAppContext()
+    const { getJobs,
+        jobs,
+        isLoading,
+        page,
+        totalJobs,
+        search,
+        searchStatus,
+        searchType,
+        sort 
+    } = useAppContext()
 
     useEffect(() => {
         getJobs()
-    }, [])
+        
+        // add ni '[search, searchStatus, searchType, sort]' sa array dependency to check if naa updates sa kini ([search, searchStatus, searchType, sort]) mga states
+    }, [search, searchStatus, searchType, sort])
 
     if (isLoading) {
         return <Loading center />
