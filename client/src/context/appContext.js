@@ -31,7 +31,8 @@ import {
     EDIT_JOB_SUCCESS,
     EDIT_JOB_ERROR,    
     SHOW_STATS_BEGIN,
-    SHOW_STATS_SUCCESS
+    SHOW_STATS_SUCCESS,
+    CLEAR_FILTERS
 } from "./actions"
 
 // set as default
@@ -406,9 +407,11 @@ const AppProvider = ({ children }) => {
         }
         clearAlert()
     }
-
+    
+    // from CLEAR_FILTERS
     const clearFilters = () =>{
-        console.log('clear filters')
+        // console.log('clear filters')
+        dispatch({ type: CLEAR_FILTERS })
     }
 
     // from TOGGLE_SIDEBAR
