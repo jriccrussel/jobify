@@ -20,7 +20,29 @@ const createJob = async (req, res) => {
 
 const getAllJobs = async (req, res) => {
     // res.send('get all jobs')
-    const jobs = await Job.find({ createdBy: req.user.userId })
+    // const jobs = await Job.find({ createdBy: req.user.userId })
+
+    const { search, status, jobType, sort } = req.query;
+
+    const queryObject = {
+        createdBy: req.user.userId,
+    };
+
+    // add stuff based on conditions
+    // if 'status' is not equal to 'all' - add 'pending, fail, interview' para sa ato status
+    // since ang 'queryObject' we can add another property sa ato object based sa condition
+    // from queryObject = { createdBy: req.user.userId }  sa conditon if 'status' is not equal to 'all' then we add status sa 'queryObject' to this queryObject = { createdBy: req.user.userId, status } 
+    if (status !== 'all') {
+        queryObject.status = status;
+    }
+
+    // NO AWAIT - its because need nato kuhaon ang query(kuhaon ang specific na result based on status, search, jobType and etc) but if we put 'await' we right away get the results dili nato makuha ang query or ang specific result kato kuhaon
+    let result = Job.find(queryObject);
+
+    // chain sort conditions
+
+    // after na makita ang query then we 'await' the result
+    const jobs = await result;
 
     res
         .status(StatusCodes.OK)

@@ -3877,3 +3877,30 @@ const AreaChartComponent = ({ data }) => {
   );
 };
 ```
+
+#### Filter
+
+#### Get All Jobs - Initial Setup
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const { search, status, jobType, sort } = req.query;
+
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+
+  // NO AWAIT
+  let result = Job.find(queryObject);
+
+  // chain sort conditions
+
+  const jobs = await result;
+
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+};
+```
