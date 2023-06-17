@@ -4009,3 +4009,4 @@ const getAllJobs = async (req, res) => {
     .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 };
 ```
+

@@ -33,18 +33,19 @@ const getAllJobs = async (req, res) => {
 
     // add stuff based on conditions
     // {{URL}}/jobs?status=pending
-    // get all jobs based on status (para sa search form sa ato front-end)
+    // get all jobs based on status (para sa search form sa ato client)
     // if 'status' is not equal to 'all' - add 'pending, declined, interview' para sa ato status
     // ang 'queryObject' we can add another property sa ato object based sa condition
     // from queryObject = { createdBy: req.user.userId } sa conditon if 'status' is not equal to 'all' then we add status sa 'queryObject' to queryObject = { createdBy: req.user.userId, status } sa atong req.query
-    if (status !== 'all') {
+    // status && status !== 'all'  - we add 'status'(before 'status !== 'all'') - para ma fetch sa client
+    if (status && status !== 'all') {
         queryObject.status = status
     }
 
     // get all jobs based on job type 
     // {{URL}}/jobs?status=pending&jobType=full-time
     // queryObject = { createdBy: req.user.userId, jobType } 
-    if (jobType !== 'all') {
+    if (jobType && jobType !== 'all') {
         queryObject.jobType = jobType
     }
 
@@ -56,7 +57,7 @@ const getAllJobs = async (req, res) => {
         queryObject.position = { $regex: search, $options: 'i' }
     }
     
-    console.log("%c Line:31 🥛 queryObject", "color:#e41a6a", queryObject)
+    // console.log("%c Line:31 🥛 queryObject", "color:#e41a6a", queryObject)
 
     // NO AWAIT - its because need nato kuhaon ang query(kuhaon ang specific na result based on status, search, jobType and etc) but if we put 'await' we right away get the results dili nato makuha ang query or ang specific result kato kuhaon
     let result = Job.find(queryObject)
