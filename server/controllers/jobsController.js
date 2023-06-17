@@ -77,6 +77,20 @@ const getAllJobs = async (req, res) => {
         result = result.sort('-position')
     }
 
+    // const totalJobs = await result
+    // setup pagination
+    // const limit = 10
+    // const skip = 1
+
+    // result = result.skip(skip).limit(limit)
+
+    // setup pagination
+    // get - {{URL}}/jobs?status=all&sort=latest&page=3&limit=25
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 10
+    const skip = (page - 1) * limit //10
+    result = result.skip(skip).limit(limit)
+
     // after na makita ang query then we 'await' the result
     const jobs = await result
     // console.log("%c Line:66 🍤 jobs", "color:#3f7cff", jobs)
