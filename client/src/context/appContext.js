@@ -32,7 +32,8 @@ import {
     EDIT_JOB_ERROR,    
     SHOW_STATS_BEGIN,
     SHOW_STATS_SUCCESS,
-    CLEAR_FILTERS
+    CLEAR_FILTERS,
+    CHANGE_PAGE
 } from "./actions"
 
 // set as default
@@ -423,6 +424,11 @@ const AppProvider = ({ children }) => {
         dispatch({ type: CLEAR_FILTERS })
     }
 
+    // from CHANGE_PAGE
+    const changePage = (page) => {
+        dispatch({ type: CHANGE_PAGE, payload: { page } })
+    }
+
     // from TOGGLE_SIDEBAR
     const toggleSidebar = () => {
         dispatch({ type: TOGGLE_SIDEBAR })
@@ -452,7 +458,8 @@ const AppProvider = ({ children }) => {
             editJob,
             deleteJob,
             showStats,
-            clearFilters
+            clearFilters,
+            changePage
         }}>
             {children}
         </AppContext.Provider>

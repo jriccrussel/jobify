@@ -4309,3 +4309,258 @@ const getAllJobs = async (req, res) => {
     .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
 };
 ```
+
+#### Page and Limit
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const { search, status, jobType, sort } = req.query;
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+  if (search) {
+    queryObject.position = { $regex: search, $options: 'i' };
+  }
+  if (status !== 'all') {
+    queryObject.status = status;
+  }
+  if (jobType !== 'all') {
+    queryObject.jobType = jobType;
+  }
+  let result = Job.find(queryObject);
+
+  if (sort === 'latest') {
+    result = result.sort('-createdAt');
+  }
+  if (sort === 'oldest') {
+    result = result.sort('createdAt');
+  }
+  if (sort === 'a-z') {
+    result = result.sort('position');
+  }
+  if (sort === 'z-a') {
+    result = result.sort('-position');
+  }
+
+  // setup pagination
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit; //10
+  result = result.skip(skip).limit(limit);
+  // 75
+  // 10 10 10 10 10 10 10 5
+  const jobs = await result;
+  res
+    .status(StatusCodes.OK)
+    .json({ jobs, totalJobs: jobs.length, numOfPages: 1 });
+};
+```
+
+#### Total Jobs and Number Of Pages
+
+```js
+jobsController.js;
+
+const getAllJobs = async (req, res) => {
+  const { search, status, jobType, sort } = req.query;
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+  if (search) {
+    queryObject.position = { $regex: search, $options: 'i' };
+  }
+  if (status !== 'all') {
+    queryObject.status = status;
+  }
+  if (jobType !== 'all') {
+    queryObject.jobType = jobType;
+  }
+  let result = Job.find(queryObject);
+
+  if (sort === 'latest') {
+    result = result.sort('-createdAt');
+  }
+  if (sort === 'oldest') {
+    result = result.sort('createdAt');
+  }
+  if (sort === 'a-z') {
+    result = result.sort('position');
+  }
+  if (sort === 'z-a') {
+    result = result.sort('-position');
+  }
+
+  // setup pagination
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  result = result.skip(skip).limit(limit);
+
+  const jobs = await result;
+
+  const totalJobs = await Job.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalJobs / limit);
+
+  res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages });
+};
+```
+
+#### PageBtnContainer Setup
+
+- PageBtnContainer.js
+
+```js
+JobsContainer.js;
+
+import PageBtnContainer from './PageBtnContainer';
+
+const { numOfPages } = useAppContext();
+
+return (
+  <Wrapper>
+    <h5>
+      {totalJobs} job{jobs.length > 1 && 's'} found
+    </h5>
+    <div className='jobs'>
+      {jobs.map((job) => {
+        return <Job key={job._id} {...job} />;
+      })}
+    </div>
+    {numOfPages > 1 && <PageBtnContainer />}
+  </Wrapper>
+);
+```
+
+#### PageBtnContainer - Structure
+
+```js
+PageBtnContainer.js;
+
+import { useAppContext } from '../context/appContext';
+import { HiChevronDoubleLeft, HiChevronDoubleRight } from 'react-icons/hi';
+import Wrapper from '../assets/wrappers/PageBtnContainer';
+
+const PageButtonContainer = () => {
+  const { numOfPages, page } = useAppContext();
+
+  const prevPage = () => {
+    console.log('prev page');
+  };
+  const nextPage = () => {
+    console.log('next page');
+  };
+
+  return (
+    <Wrapper>
+      <button className='prev-btn' onClick={prevPage}>
+        <HiChevronDoubleLeft />
+        prev
+      </button>
+
+      <div className='btn-container'>buttons</div>
+
+      <button className='next-btn' onClick={nextPage}>
+        next
+        <HiChevronDoubleRight />
+      </button>
+    </Wrapper>
+  );
+};
+
+export default PageButtonContainer;
+```
+
+#### Button Container
+
+- [Array.from] (https://youtu.be/zg1Bv4xubwo)
+
+```js
+PageBtnContainer.js;
+
+const pages = Array.from({ length: numOfPages }, (_, index) => {
+  return index + 1;
+});
+
+return (
+  <div className='btn-container'>
+    {pages.map((pageNumber) => {
+      return (
+        <button
+          type='button'
+          className={pageNumber === page ? 'pageBtn active' : 'pageBtn'}
+          key={pageNumber}
+          onClick={() => console.log(page)}
+        >
+          {pageNumber}
+        </button>
+      );
+    })}
+  </div>
+);
+```
+
+#### Change Page
+
+```js
+actions.js;
+export const CHANGE_PAGE = 'CHANGE_PAGE';
+```
+
+```js
+appContext.js
+const changePage = (page) => {
+  dispatch({ type: CHANGE_PAGE, payload: { page } })
+}
+value={{changePage}}
+```
+
+```js
+reducer.js;
+
+if (action.type === CHANGE_PAGE) {
+  return { ...state, page: action.payload.page };
+}
+```
+
+```js
+PageBtnContainer.js;
+
+const { changePage } = useAppContext();
+return (
+  <button
+    type='button'
+    className={pageNumber === page ? 'pageBtn active' : 'pageBtn'}
+    key={pageNumber}
+    onClick={() => changePage(pageNumber)}
+  >
+    {pageNumber}
+  </button>
+);
+```
+
+#### Prev and Next Buttons
+
+```js
+PageBtnContainer.js;
+const prevPage = () => {
+  let newPage = page - 1;
+  if (newPage < 1) {
+    // newPage = 1
+    // alternative
+    newPage = numOfPages;
+  }
+  changePage(newPage);
+};
+const nextPage = () => {
+  let newPage = page + 1;
+  if (newPage > numOfPages) {
+    // newPage = numOfPages
+    // alternative
+    newPage = 1;
+  }
+  changePage(newPage);
+};
+```
