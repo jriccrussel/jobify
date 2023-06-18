@@ -314,9 +314,10 @@ const AppProvider = ({ children }) => {
     // from GET_JOBS_BEGIN, GET_JOBS_SUCCESS
     const getJobs = async () => {
 
-        const { search, searchStatus, searchType, sort } = state
+        const { page, search, searchStatus, searchType, sort } = state
         // let url = `/jobs`
-        let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`
+        //let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`
+        let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`
 
         // if naa or valid 'search" then 'url' add apil ang `&search=${search}`
         if (search) {

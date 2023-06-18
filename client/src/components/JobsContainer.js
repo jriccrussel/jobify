@@ -23,7 +23,7 @@ const JobsContainer = () => {
         getJobs()
         
         // add ni '[search, searchStatus, searchType, sort]' sa array dependency to check if naa updates sa kini ([search, searchStatus, searchType, sort]) mga states
-    }, [search, searchStatus, searchType, sort])
+    }, [page, search, searchStatus, searchType, sort])
 
     if (isLoading) {
         return <Loading center />

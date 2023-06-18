@@ -176,7 +176,11 @@ const reducer = (state, action) => {
     }
     // HANDLE_CHANGE
     if (action.type === HANDLE_CHANGE) {
-        return { ...state, [action.payload.name]: action.payload.value }
+        // return { ...state, [action.payload.name]: action.payload.value }
+        // we add 'page: 1'  to set as default for page para sa ato state, we want it so kung mag search ta, search what status, type or sort sa ato search form component we always set back to page 1 
+
+        // issue if exmaple ni adto ka page 3 then ang search ka, then ang request naa permi sa page 3, we need the request always set back to page 1 every timne mag search ta, search what status, type or sort sa ato search form component
+        return { ...state, page: 1, [action.payload.name]: action.payload.value }
     }
     // CLEAR_VALUES
     if (action.type === CLEAR_VALUES) {
