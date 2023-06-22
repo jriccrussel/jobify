@@ -338,10 +338,10 @@ const AppProvider = ({ children }) => {
                 },
             })
         } catch (error) {
-            console.log(error.response)
+            // console.log(error.response)
             // comment kai when ever we had an error 400 or 401 it will logout automatically and its kinda annoying since we only want to fetch the getJobs 
             // from LOGOUT_USER
-            // logoutUser()
+            logoutUser()
         }
         // clear the alert after fetching the getJobs
         // from CLEAR_ALERT
@@ -413,8 +413,8 @@ const AppProvider = ({ children }) => {
                 },
             })
         } catch (error) {
-            console.log(error.response)
-            // logoutUser()
+            // console.log(error.response)
+            logoutUser()
         }
         clearAlert()
     }

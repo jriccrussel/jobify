@@ -21,6 +21,8 @@ const JobsContainer = () => {
 
     useEffect(() => {
         getJobs()
+
+        // eslint-disable-next-line
         
         // add ni '[search, searchStatus, searchType, sort]' sa array dependency to check if naa updates sa kini ([search, searchStatus, searchType, sort]) mga states
     }, [page, search, searchStatus, searchType, sort])

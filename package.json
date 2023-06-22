@@ -4,6 +4,7 @@
   "description": "- npm run install-dependencies\r - rename .env.temp to .env\r - setup values for - MONGO_URL, JWT_SECRET, JWT_LIFETIME\r - npm start\r - visit url http://localhost:3000/",
   "main": "index.js",
   "scripts": {
+    "build-client": "cd client && yarn run build",
     "start": "concurrently \"yarn server\" \"yarn client\"",
     "server": "cd server && nodemon server.js",
     "client": "cd client && yarn start"

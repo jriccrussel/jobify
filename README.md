@@ -4564,3 +4564,82 @@ const nextPage = () => {
   changePage(newPage);
 };
 ```
+
+#### Trigger New Page
+
+```js
+appContext.js;
+
+const getJobs = async () => {
+  const { page, search, searchStatus, searchType, sort } = state;
+
+  let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
+  // rest of the code
+};
+```
+
+```js
+JobsContainer.js;
+
+const { page } = useAppContext();
+useEffect(() => {
+  getJobs();
+}, [page, search, searchStatus, searchType, sort]);
+```
+
+```js
+reducer.js;
+
+if (action.type === HANDLE_CHANGE) {
+  // set back to first page
+
+  return { ...state, page: 1, [action.payload.name]: action.payload.value };
+}
+```
+
+#### Production Setup - Fix Warnings and logoutUser
+
+- getJobs,deleteJob,showStats - invoke logoutUser()
+- fix warnings
+
+```sh
+// eslint-disable-next-line
+```
+
+#### Production Setup - Build Front-End Application
+
+- create front-end production application
+
+```js
+package.json
+"scripts": {
+    "build-client": "cd client && npm run build",
+    "server": "nodemon server.js --ignore client",
+    "client": "cd client && npm run start",
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+
+  },
+
+```
+
+```js
+server.js;
+
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// only when ready to deploy
+app.use(express.static(path.resolve(__dirname, './client/build')));
+
+// routes
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/jobs', authenticateUser, jobsRouter);
+
+// only when ready to deploy
+app.get('*', function (request, response) {
+  response.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
+});
+```
