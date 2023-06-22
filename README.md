@@ -4643,3 +4643,49 @@ app.get('*', function (request, response) {
   response.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
 });
 ```
+
+#### Security Packages
+
+- remove log in the error-handler
+- [helmet](https://www.npmjs.com/package/helmet)
+  Helmet helps you secure your Express apps by setting various HTTP headers.
+- [xss-clean](https://www.npmjs.com/package/xss-clean)
+  Node.js Connect middleware to sanitize user input coming from POST body, GET queries, and url params.
+- [express-mongo-sanitize](https://www.npmjs.com/package/express-mongo-sanitize)
+  Sanitizes user-supplied data to prevent MongoDB Operator Injection.
+- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
+  Basic rate-limiting middleware for Express.
+
+```sh
+npm install helmet xss-clean express-mongo-sanitize express-rate-limit
+```
+
+```js
+server.js;
+
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import mongoSanitize from 'express-mongo-sanitize';
+
+app.use(express.json());
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
+```
+
+#### Limit Requests
+
+```js
+authRoutes.js;
+
+import rateLimiter from 'express-rate-limit';
+
+const apiLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+});
+
+router.route('/register').post(apiLimiter, register);
+router.route('/login').post(apiLimiter, login);
+```

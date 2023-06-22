@@ -11,6 +11,11 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
+// para sa security
+import helmet from 'helmet'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
+
 // db
 import connectDB from './db/connect.js'
 
@@ -36,6 +41,11 @@ app.use(express.static(path.resolve(__dirname, '../client/build')))
 
 app.use(cors())
 app.use(express.json())
+
+// para sa security
+app.use(helmet())
+app.use(xss())
+app.use(mongoSanitize())
 
 app.get('/', (req, res) => {
     // throw new Error('Error!!!')
