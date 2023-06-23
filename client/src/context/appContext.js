@@ -487,7 +487,8 @@ const AppProvider = ({ children }) => {
     }
     
     // from LOGOUT_USER
-    const logoutUser = () => {
+    const logoutUser = async () => {
+        await authFetch.get('/auth/logout')
         dispatch({ type: LOGOUT_USER })
         // removeUserFromLocalStorage()
     }

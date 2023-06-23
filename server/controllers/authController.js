@@ -66,14 +66,23 @@ const register = async (req, res) => {
     // store ang token sa cookie dili sa local storage
     attachCookie({ res, token })
     
+    // res.status(StatusCodes.CREATED).json({ 
+    //     user: {
+    //         email: user.email,
+    //         lastName: user.lastName,
+    //         location: user.location,
+    //         name: user.name
+    //     }, 
+    //     token, 
+    //     location: user.location 
+    // })
     res.status(StatusCodes.CREATED).json({ 
         user: {
             email: user.email,
             lastName: user.lastName,
             location: user.location,
             name: user.name
-        }, 
-        token, 
+        },  
         location: user.location 
     })
 }
@@ -152,16 +161,30 @@ const updateUser = async (req, res) => {
     // store ang token sa cookie dili sa local storage
     attachCookie({ res, token })
 
+    //res.status(StatusCodes.OK).json({
+    //    user,
+    //    token,
+    //    location: user.location,
+    //})
     res.status(StatusCodes.OK).json({
         user,
-        token,
         location: user.location,
     })
 }
 
+// get - {{URL}}/getCurrentUser
 const getCurrentUser = async (req, res) => {
     const user = await User.findOne({ _id: req.user.userId })
     res.status(StatusCodes.OK).json({ user, location: user.location })
 }
 
-export{ register, login, updateUser, getCurrentUser }
+// get - {{URL}}/logout
+const logout = async (req, res) => {
+    res.cookie('token', 'logout', {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000),
+    })
+    res.status(StatusCodes.OK).json({ msg: 'user logged out!' })
+}
+
+export{ register, login, updateUser, getCurrentUser, logout }

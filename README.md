@@ -5138,3 +5138,83 @@ if (action.type === LOGOUT_USER) {
   };
 }
 ```
+
+#### Protected Route FIX
+
+```js
+import Loading from '../components/Loading';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, userLoading } = useAppContext();
+
+  if (userLoading) return <Loading />;
+
+  if (!user) {
+    return <Navigate to='/landing' />;
+  }
+  return children;
+};
+
+export default ProtectedRoute;
+```
+
+#### Landing Page
+
+```js
+import { Navigate } from 'react-router-dom';
+import { useAppContext } from '../context/appContext';
+
+const Landing = () => {
+  const { user } = useAppContext();
+  return (
+    <React.Fragment>
+      {user && <Navigate to='/' />}
+      <Wrapper>// rest of the code..........</Wrapper>
+    </React.Fragment>
+  );
+};
+
+export default Landing;
+```
+
+#### Logout Route
+
+controllers/authController
+
+```js
+const logout = async (req, res) => {
+  res.cookie('token', 'logout', {
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000),
+  });
+  res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
+};
+```
+
+routes/authRoutes
+
+```js
+import {
+  register,
+  login,
+  updateUser,
+  getCurrentUser,
+  logout,
+} from '../controllers/authController.js';
+
+router.route('/register').post(apiLimiter, register);
+router.route('/login').post(apiLimiter, login);
+router.get('/logout', logout);
+// rest of the code ....
+```
+
+#### Logout - Front-End
+
+appContext.js
+
+```js
+const logoutUser = async () => {
+  await authFetch.get('/auth/logout');
+  dispatch({ type: LOGOUT_USER });
+};
+```
