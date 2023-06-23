@@ -99,6 +99,7 @@ const AppProvider = ({ children }) => {
     // request
     // we do something before the request is sent
     // comment ni nato cya since ato token naka save na sa atp cookie
+    // if your wondering asa ghimo ang token and asa nya g save sa cookie automatically? token is created sa ato backend or ang server and at the same time g saved pud sa cookie
     // authFetch.interceptors.request.use(
     //     (config) => {
     //         // add the headers before the request is sent
@@ -198,7 +199,7 @@ const AppProvider = ({ children }) => {
             // })
             dispatch({
                 type: LOGIN_USER_SUCCESS,
-                payload: { user, token, location },
+                payload: { user, location },
             })
         
             // addUserToLocalStorage({ user, token, location })
