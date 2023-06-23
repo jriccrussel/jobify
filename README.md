@@ -4935,3 +4935,43 @@ import attachCookie from '../utils/attachCookie.js';
 
 attachCookie({ res, token });
 ```
+
+#### Parse Cookie Coming Back from the Front-End
+
+- install cookie-parser (server)
+
+```sh
+npm install cookie-parser
+```
+
+server.js
+
+```js
+import cookieParser from 'cookie-parser';
+
+app.use(express.json());
+app.use(cookieParser());
+```
+
+middleware/auth.js
+
+```js
+const auth = async (req, res, next) => {
+  console.log(req.cookies)
+  ....
+}
+```
+
+#### Refactor Auth Middleware
+
+middleware/auth.js
+
+```js
+const auth = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    throw new UnAuthenticatedError('Authentication Invalid');
+  }
+  // rest of the code
+};
+```
