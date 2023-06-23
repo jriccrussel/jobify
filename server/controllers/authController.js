@@ -120,7 +120,8 @@ const login = async (req, res) => {
     //     secure: process.env.NODE_ENV === 'production',
     // })
     // res.send('login user')
-    res.status(StatusCodes.OK).json({ user, token, location: user.location })
+    // res.status(StatusCodes.OK).json({ user, token, location: user.location })
+    res.status(StatusCodes.OK).json({ user, location: user.location })
 }
 
 // patch - {{URL}}/auth/updateUser
