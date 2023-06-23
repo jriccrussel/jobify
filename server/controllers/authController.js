@@ -103,6 +103,15 @@ const login = async (req, res) => {
     // remove nato from our response(ato g send)
     // to avoid sending sensitive data like password sa ato client
     user.password = undefined
+
+    // instead e store ang token sa local storage we instead store it sa ato cookie
+    // we store ang token to cookie when everytime mag login/register ta and e authenticate pud nya at the same time ddto sa server(sa middleware check if sakto ang token or dili)
+    const oneDay = 1000 * 60 * 60 * 24
+    res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + oneDay),
+        secure: process.env.NODE_ENV === 'production',
+    })
     // res.send('login user')
     res.status(StatusCodes.OK).json({ user, token, location: user.location })
 }
