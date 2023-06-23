@@ -5036,3 +5036,105 @@ const logoutUser = async () => {
   // remove local storage code
 };
 ```
+
+#### Test Expiration
+
+```js
+expires: new Date(Date.now() + 5000),
+```
+
+#### GET Current User Route
+
+controllers/authController.js
+
+```js
+const getCurrentUser = async (req, res) => {
+  const user = await User.findOne({ _id: req.user.userId });
+  res.status(StatusCodes.OK).json({ user, location: user.location });
+};
+
+export { register, login, updateUser, getCurrentUser };
+```
+
+routes/authRoutes.js
+
+```js
+import {
+  register,
+  login,
+  updateUser,
+  getCurrentUser,
+} from '../controllers/authController.js';
+
+router.route('/register').post(apiLimiter, register);
+router.route('/login').post(apiLimiter, login);
+router.route('/updateUser').patch(authenticateUser, testUser, updateUser);
+router.route('/getCurrentUser').get(authenticateUser, getCurrentUser);
+```
+
+#### GET Current User - Front-End
+
+actions.js
+
+```js
+export const GET_CURRENT_USER_BEGIN = 'GET_CURRENT_USER_BEGIN';
+export const GET_CURRENT_USER_SUCCESS = 'GET_CURRENT_USER_SUCCESS';
+```
+
+- setup imports (appContext and reducer)
+
+#### GET Current User Request
+
+- first set the state value (default TRUE !!!)
+  appContext.js
+
+```js
+const initialState = {
+  userLoading: true,
+};
+
+const getCurrentUser = async () => {
+  dispatch({ type: GET_CURRENT_USER_BEGIN });
+  try {
+    const { data } = await authFetch('/auth/getCurrentUser');
+    const { user, location } = data;
+
+    dispatch({
+      type: GET_CURRENT_USER_SUCCESS,
+      payload: { user, location },
+    });
+  } catch (error) {
+    if (error.response.status === 401) return;
+    logoutUser();
+  }
+};
+useEffect(() => {
+  getCurrentUser();
+}, []);
+```
+
+reducer.js
+
+```js
+if (action.type === GET_CURRENT_USER_BEGIN) {
+  return { ...state, userLoading: true, showAlert: false };
+}
+if (action.type === GET_CURRENT_USER_SUCCESS) {
+  return {
+    ...state,
+    userLoading: false,
+    user: action.payload.user,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+  };
+}
+```
+
+```js
+if (action.type === LOGOUT_USER) {
+  return {
+    ...initialState,
+    userLoading: false,
+  };
+}
+```
