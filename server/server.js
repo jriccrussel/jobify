@@ -21,7 +21,6 @@ import connectDB from './db/connect.js'
 
 // authenticate
 
-
 // router
 import authRouter from './routes/authRoutes.js'
 import jobsRouter from './routes/jobsRoutes.js'
@@ -30,6 +29,9 @@ import jobsRouter from './routes/jobsRoutes.js'
 import notFoundMiddleware from './middleware/not-found.js'
 import errorHandlerMiddleware from './middleware/error-handler.js'
 import authenticateUser from './middleware/auth.js'
+
+// cookieParser - we can able to parse or can use cookies in every request nato coming from our controiller 
+import cookieParser from 'cookie-parser'
 
 // http logger middleware as we setup more routes and controllers is used to see what routes, methods and status codes and be shown sa terminal
 if(process.env.NODE_ENV !== 'production'){
@@ -41,6 +43,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')))
 
 app.use(cors())
 app.use(express.json())
+app.use(cookieParser())
 
 // para sa security
 app.use(helmet())

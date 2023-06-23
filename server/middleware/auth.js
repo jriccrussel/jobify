@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken'
 import { UnAuthenticatedError } from '../errors/index.js'
 
 const auth = async (req, res, next) => {
+    // check if naa cookie sa every request nato(like login, register, check sa all jobs, update/edit sa jobs)
+    console.log("%c Line:5 🎂 req.cookies", "color:#6ec1c2", req.cookies);
     // console.log("%c Line:2 🍿", "color:#93c0a4", "authenticate user")
     // const headers = req.headers
     // const authHeader = req.headers.authorization
