@@ -1,8 +1,11 @@
 import { FormRow, FormRowSelect } from '.'
 import { useAppContext } from '../context/appContext'
 import Wrapper from '../assets/wrappers/SearchContainer'
+import { useState, useMemo } from 'react'
 
 const SearchContainer = () => {
+    const [localSearch, setLocalSearch] = useState('')
+
     const {
         isLoading,
         search,
@@ -17,14 +20,52 @@ const SearchContainer = () => {
     } = useAppContext()
 
     const handleSearch = (e) => {
-        if (isLoading) return
+        // if (isLoading) return
         handleChange({ name: e.target.name, value: e.target.value })
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        clearFilters();
+        e.preventDefault()
+        clearFilters()
     }
+
+    // delay logic - Debounce
+    // it runs 2s after last click
+    // setTimeout returns id, which pass into clearTimeout
+    // const btn = document.querySelector('.btn')
+    // const debounce = () => {
+    // //      const timeoutID = setTimeout(() => {
+    // //          console.log('You clicked me')
+    // //      }, 2000)
+    // //      console.log(timeoutID)
+    // //      clearTimeout(timeoutID)
+    // //      console.log('hello')
+
+    // the console.log('You clicked me') will only trigger after the last click
+    // when click debounce 1st will trigger console.log(timeoutID) 2nd e clear ang timeoutID or clearTimeout nya, lastly after 2s 3rd trigger nya ang setTimeout and run nya ang console.log('You clicked me')
+    //    let = timeoutID 
+    //    return () => {
+    //        console.log(timeoutID)
+    //        clearTimeout(timeoutID)
+    //        timeoutID = setTimeout(() => {
+    //            console.log('You clicked me')
+    //        }, 2000)
+    //    }
+    // 
+    // btn.addEventListener('click', debounce())
+
+    const debounce = () => {
+        let timeoutID
+        return (e) => {
+            setLocalSearch(e.target.value)
+            clearTimeout(timeoutID)
+            timeoutID = setTimeout(() => {
+                handleChange({ name: e.target.name, value: e.target.value })
+            }, 1000)
+        }
+    }
+
+    const optimizedDebounce = useMemo(() => debounce(), [])
 
     return (
         <Wrapper>
@@ -37,8 +78,8 @@ const SearchContainer = () => {
                     <FormRow
                         type='text'
                         name='search'
-                        value={search}
-                        handleChange={handleSearch}
+                        value={localSearch}
+                        handleChange={optimizedDebounce}
                     ></FormRow>
 
                     {/* search by status */}

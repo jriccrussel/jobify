@@ -40,7 +40,12 @@ const auth = async (req, res, next) => {
         // console.log("%c Line:39 🍪 req.user", "color:#465975", req.user)
 
         // req.user will now have access sa `{ userId: ... }`(or ang payload)
-        req.user = { userId: payload.userId }
+        // req.user = { userId: payload.userId }
+        
+        const testUser = payload.userId === '649562d8955f87896b4dddab'
+        // const testUser = payload.userId === 'testUserID'
+        req.user = { userId: payload.userId, testUser }
+        // console.log("%c Line:5 🍓 req.user", "color:#e41a6a", req.user);
 
         next()
     } catch (error) {
