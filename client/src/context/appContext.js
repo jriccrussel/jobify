@@ -38,24 +38,27 @@ import {
 } from "./actions"
 
 // set as default
-const token = localStorage.getItem('token')
-const user = localStorage.getItem('user')
-const userLocation = localStorage.getItem('location')
+// const token = localStorage.getItem('token')
+// const user = localStorage.getItem('user')
+// const userLocation = localStorage.getItem('location')
 
 const initialState = {
     isLoading: false,
     showAlert: false,
     alertText: '',
     alertType: '',
-    user: user ? JSON.parse(user) : null,
-    token: token,
-    userLocation: userLocation || '',
+    // user: user ? JSON.parse(user) : null,
+    // userLocation: userLocation || '',
+    // jobLocation: userLocation || '',
+    // token: token,
+    user: null,
+    userLocation: '',
+    jobLocation: '',
     showSidebar: false,
     isEditing: false,
     editJobId: '',
     position: '',
     company: '',
-    jobLocation: userLocation || '',
     jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
     jobType: 'full-time',
     statusOptions: ['pending', 'interview', 'declined'],
@@ -95,17 +98,18 @@ const AppProvider = ({ children }) => {
     
     // request
     // we do something before the request is sent
-    authFetch.interceptors.request.use(
-        (config) => {
-            // add the headers before the request is sent
-            config.headers['Authorization'] = `Bearer ${state.token}`
-
-            return config
-        },
-        (error) => {
-            return Promise.reject(error)
-        }
-    )
+    // comment ni nato cya since ato token naka save na sa atp cookie
+    // authFetch.interceptors.request.use(
+    //     (config) => {
+    //         // add the headers before the request is sent
+    //         config.headers['Authorization'] = `Bearer ${state.token}`
+    //
+    //         return config
+    //     },
+    //     (error) => {
+    //         return Promise.reject(error)
+    //     }
+    // )
 
     // response
     // we get the response data after we made the request
@@ -137,17 +141,17 @@ const AppProvider = ({ children }) => {
         setTimeout(() => dispatch({ type: CLEAR_ALERT }), 3000)
     }
 
-    const addUserToLocalStorage = ({ user, token, location }) => {
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('token', token)
-        localStorage.setItem('location', location)
-    }
+    // const addUserToLocalStorage = ({ user, token, location }) => {
+    //     localStorage.setItem('user', JSON.stringify(user))
+    //     localStorage.setItem('token', token)
+    //     localStorage.setItem('location', location)
+    // }
     
-    const removeUserFromLocalStorage = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        localStorage.removeItem('location')
-    }
+    // const removeUserFromLocalStorage = () => {
+    //     localStorage.removeItem('token')
+    //     localStorage.removeItem('user')
+    //     localStorage.removeItem('location')
+    // }
 
     // from REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR
     const registerUser = async (currentUser) => {
@@ -185,14 +189,19 @@ const AppProvider = ({ children }) => {
         dispatch({ type: LOGIN_USER_BEGIN })
         try {
             const { data } = await axios.post('/api/v1/auth/login', currentUser)
-            const { user, token, location } = data
+            // const { user, token, location } = data
+            const { user, location } = data
         
+            // dispatch({
+            //     type: LOGIN_USER_SUCCESS,
+            //     payload: { user, token, location },
+            // })
             dispatch({
                 type: LOGIN_USER_SUCCESS,
                 payload: { user, token, location },
             })
         
-            addUserToLocalStorage({ user, token, location })
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             dispatch({
                 type: LOGIN_USER_ERROR,
@@ -208,14 +217,19 @@ const AppProvider = ({ children }) => {
         dispatch({ type: SETUP_USER_BEGIN })
         try {
             const { data } = await axios.post(`/api/v1/auth/${endPoint}`, currentUser)
-            const { user, token, location } = data
+            // const { user, token, location } = data
+            const { user, location } = data
         
+            // dispatch({
+            //     type: SETUP_USER_SUCCESS,
+            //     payload: { user, token, location, alertText },
+            // })
             dispatch({
-                type: SETUP_USER_SUCCESS,
-                payload: { user, token, location, alertText },
+               type: SETUP_USER_SUCCESS,
+               payload: { user, location, alertText },
             })
         
-            addUserToLocalStorage({ user, token, location })
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             dispatch({
                 type: SETUP_USER_ERROR,
@@ -244,15 +258,19 @@ const AppProvider = ({ children }) => {
             // using instance
             const { data } = await authFetch.patch('/auth/updateUser', currentUser)
             // console.log("%c Line:138 🍉 data", "color:#93c0a4", data)
-
+            // const { user, location, token } = data
             const { user, location, token } = data
 
+            // dispatch({
+            //     type: UPDATE_USER_SUCCESS,
+            //     payload: { user, location, token },
+            // })
             dispatch({
                 type: UPDATE_USER_SUCCESS,
-                payload: { user, location, token },
+                payload: { user, location },
             })
-
-            addUserToLocalStorage({ user, location, token })
+ 
+            // addUserToLocalStorage({ user, location, token })
             // addUserToLocalStorage({ user, location, token: initialState.token })
         } catch (error) {
             // console.log("%c Line:144 🍧 error", "color:#ed9ec7", error.response)
@@ -446,7 +464,7 @@ const AppProvider = ({ children }) => {
     // from LOGOUT_USER
     const logoutUser = () => {
         dispatch({ type: LOGOUT_USER })
-        removeUserFromLocalStorage()
+        // removeUserFromLocalStorage()
     }
 
     return (
