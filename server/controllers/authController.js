@@ -1,6 +1,7 @@
 import User from '../models/User.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError, UnAuthenticatedError } from '../errors/index.js'
+import attachCookie from '../utils/attachCookies.js'
 
 // Custom Errors
 // class CustomAPIError extends Error {
@@ -61,6 +62,9 @@ const register = async (req, res) => {
 
     // add token
     const token = user.createJWT()
+
+    // store ang token sa cookie dili sa local storage
+    attachCookie({ res, token })
     
     res.status(StatusCodes.CREATED).json({ 
         user: {
@@ -104,14 +108,17 @@ const login = async (req, res) => {
     // to avoid sending sensitive data like password sa ato client
     user.password = undefined
 
+    // store ang token sa cookie dili sa local storage
+    attachCookie({ res, token })
+
     // instead e store ang token sa local storage we instead store it sa ato cookie
     // we store ang token to cookie when everytime mag login/register ta and e authenticate pud nya at the same time ddto sa server(sa middleware check if sakto ang token or dili)
-    const oneDay = 1000 * 60 * 60 * 24
-    res.cookie('token', token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + oneDay),
-        secure: process.env.NODE_ENV === 'production',
-    })
+    // const oneDay = 1000 * 60 * 60 * 24
+    // res.cookie('token', token, {
+    //     httpOnly: true,
+    //     expires: new Date(Date.now() + oneDay),
+    //     secure: process.env.NODE_ENV === 'production',
+    // })
     // res.send('login user')
     res.status(StatusCodes.OK).json({ user, token, location: user.location })
 }
@@ -140,6 +147,9 @@ const updateUser = async (req, res) => {
     // if other properties included, must re-generate
 
     const token = user.createJWT()
+
+    // store ang token sa cookie dili sa local storage
+    attachCookie({ res, token })
 
     res.status(StatusCodes.OK).json({
         user,
