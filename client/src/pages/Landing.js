@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/Testing'
 import { Logo } from '../components'
+import { useAppContext } from '../context/appContext'
 // import styled from 'styled-components'
 
 const Landing = () => {

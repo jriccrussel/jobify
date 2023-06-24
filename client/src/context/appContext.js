@@ -176,7 +176,7 @@ const AppProvider = ({ children }) => {
                 payload: { user, token, location }
             })
             // Local storage
-            addUserToLocalStorage({ user, token, location })
+            // addUserToLocalStorage({ user, token, location })
         } catch (error) {
             // console.log("%c Line:54 🥒 error", "color:#b03734", error.response)            
             dispatch({
